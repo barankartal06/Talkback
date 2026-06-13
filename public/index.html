@@ -8,20 +8,30 @@
     navigator.mediaDevices.getUserMedia({audio: true})
         .then((stream)=> {
             const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
-            recorder.start(100)
-            let firstChunk = null
+            recorder.start(250)
+            let initChunk = null
             recorder.ondataavailable = (event) => {
-                if (!firstChunk){
-                    firstChunk = event.data
+                if (!initChunk){
+                    initChunk=event.data
+                    socket.emit('audio', event.data)
+                }else{
+                    const blob = new Blob([initChunk, event.data])
+                    socket.emit('audio', blob )
                 }
-                const blob = new Blob([firstChunk, event.data], { type: 'audio/webm;codecs=opus'})
-                socket.emit('audio', blob)
-            }
+                }
+                
         })
+    let nextStartTime = 0
     socket.on('audio', (arrayBuffer) => {
-        const blob = new Blob ([arrayBuffer], {type: 'audio/webm;codecs=opus'})
-        const url = URL.createObjectURL(blob)
-        const audio = new Audio(url)
-        audio.play().catch((err) => console.log('play error:', err))
+        console.log(typeof arrayBuffer, arrayBuffer)
+        audioContext.decodeAudioData(arrayBuffer, (buffer)=>{
+        const source = audioContext.createBufferSource()
+        source.buffer = buffer
+        source.connect(audioContext.destination)
+        if (nextStartTime<audioContext.currentTime){
+            nextStartTime=audioContext.currentTime+0.05}
+        source.start(nextStartTime)
+        nextStartTime+=buffer.duration
+        })        
     })
 </script>
