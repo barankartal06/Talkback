@@ -16,18 +16,18 @@
     const audio = new Audio()
     const mediaSource = new MediaSource()
     audio.src = URL.createObjectURL(mediaSource)
-    audio.play()
     mediaSource.addEventListener('sourceopen', () => {
         const sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
         const queue = []
         const appendNext = () => {
-            if (!sourceBuffer.updating){
+            if (!sourceBuffer.updating && queue.length > 0 && mediaSource.readyState==="open"){
                 sourceBuffer.appendBuffer(queue.shift())}}
         sourceBuffer.addEventListener('updateend', appendNext)        
         socket.on('audio', (data) => { 
             queue.push(data)
             appendNext()
         })
+        audio.play().catch(() => {})
         })
 
 </script>
