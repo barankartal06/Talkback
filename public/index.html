@@ -1,0 +1,7 @@
+<h1>Talkback</h1>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io()
+    const name= prompt('what is your name?')
+    socket.emit('join', name)
+</script>
