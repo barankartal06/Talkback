@@ -9,29 +9,25 @@
         .then((stream)=> {
             const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
             recorder.start(250)
-            let initChunk = null
             recorder.ondataavailable = (event) => {
-                if (!initChunk){
-                    initChunk=event.data
-                    socket.emit('audio', event.data)
-                }else{
-                    const blob = new Blob([initChunk, event.data])
-                    socket.emit('audio', blob )
+                socket.emit('audio', event.data)}
                 }
-                }
-                
+        )
+    const audio = new Audio()
+    const mediaSource = new MediaSource()
+    audio.src = URL.createObjectURL(mediaSource)
+    audio.play()
+    mediaSource.addEventListener('sourceopen', () => {
+        const sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
+        const queue = []
+        const appendNext = () => {
+            if (!sourceBuffer.updating){
+                sourceBuffer.appendBuffer(queue.shift())}}
+        sourceBuffer.addEventListener('updateend', appendNext)        
+        socket.on('audio', (data) => { 
+            queue.push(data)
+            appendNext()
         })
-    let nextStartTime = 0
-    socket.on('audio', (arrayBuffer) => {
-        console.log(typeof arrayBuffer, arrayBuffer)
-        audioContext.decodeAudioData(arrayBuffer, (buffer)=>{
-        const source = audioContext.createBufferSource()
-        source.buffer = buffer
-        source.connect(audioContext.destination)
-        if (nextStartTime<audioContext.currentTime){
-            nextStartTime=audioContext.currentTime+0.05}
-        source.start(nextStartTime)
-        nextStartTime+=buffer.duration
-        })        
-    })
+        })
+
 </script>
