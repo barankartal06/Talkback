@@ -4,4 +4,13 @@
     const socket = io()
     const name= prompt('what is your name?')
     socket.emit('join', name)
+    navigator.mediaDevices.getUserMedia({audio: true})
+        .then((stream)=> {
+            console.log(stream)
+            const recorder = new MediaRecorder(stream)
+            recorder.start(100)
+            recorder.ondataavailable = (event) => {
+                socket.emit('audio', event.data)
+            }
+        })
 </script>

@@ -19,5 +19,9 @@ io.on('connection', (socket)=> {
         socket.name=name
         console.log(name, 'joined the session.')
     })
+    socket.on('audio',(data)=> {
+        socket.broadcast.emit('audio', data)
+        }
+)
     socket.on('disconnect',()=> console.log(socket.name, 'left the session.'))
     })
