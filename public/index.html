@@ -1,16 +1,27 @@
 <h1>Talkback</h1>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    const audioContext = new AudioContext()
     const socket = io()
     const name= prompt('what is your name?')
     socket.emit('join', name)
     navigator.mediaDevices.getUserMedia({audio: true})
         .then((stream)=> {
-            console.log(stream)
-            const recorder = new MediaRecorder(stream)
+            const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
             recorder.start(100)
+            let firstChunk = null
             recorder.ondataavailable = (event) => {
-                socket.emit('audio', event.data)
+                if (!firstChunk){
+                    firstChunk = event.data
+                }
+                const blob = new Blob([firstChunk, event.data], { type: 'audio/webm;codecs=opus'})
+                socket.emit('audio', blob)
             }
         })
+    socket.on('audio', (arrayBuffer) => {
+        const blob = new Blob ([arrayBuffer], {type: 'audio/webm;codecs=opus'})
+        const url = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audio.play().catch((err) => console.log('play error:', err))
+    })
 </script>
