@@ -13,20 +13,26 @@
                 socket.emit('audio', event.data)}
                 }
         )
-    let nextStartTime = 0       
-        socket.on('audio', (data) => { 
-            console.log(typeof(data))
-            
-                audioContext.decodeAudioData(data.buffer, (decodedAudio) => {
-                    const source = audioContext.createBufferSource()
-                    source.buffer = decodedAudio
-                    source.connect(audioContext.destination)
-                    if (nextStartTime<audioContext.currentTime){
-                        nextStartTime=audioContext.currentTime
-                    }
-                    source.start(nextStartTime)
-                    nextStartTime+= source.buffer.duration
-                })
-            
-        })
+let currentAudio = null;
+socket.on('audio', (data) => {
+    const blob = new Blob([data], { type: 'audio/webm; codecs=opus' })
+    const url = URL.createObjectURL(blob)
+    if (currentAudio) {
+        currentAudio.pause()
+        currentAudio.src = ""
+        URL.revokeObjectURL(currentAudio._url)
+    }
+    const audio = new Audio(url)
+    audio._url = url
+    currentAudio = audio
+    audio.play().catch(() => {
+        // autoplay can fail if browser blocks it
+    });
+    audio.onended = () => {
+        URL.revokeObjectURL(url)
+        if (currentAudio === audio) {
+            currentAudio = null
+        }
+    }
+})
 </script>
