@@ -13,21 +13,20 @@
                 socket.emit('audio', event.data)}
                 }
         )
-    const audio = new Audio()
-    const mediaSource = new MediaSource()
-    audio.src = URL.createObjectURL(mediaSource)
-    mediaSource.addEventListener('sourceopen', () => {
-        const sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
-        const queue = []
-        const appendNext = () => {
-            if (!sourceBuffer.updating && queue.length > 0 && mediaSource.readyState==="open"){
-                sourceBuffer.appendBuffer(queue.shift())}}
-        sourceBuffer.addEventListener('updateend', appendNext)        
+    let nextStartTime = 0       
         socket.on('audio', (data) => { 
-            queue.push(data)
-            appendNext()
+            console.log(typeof(data))
+            
+                audioContext.decodeAudioData(data.buffer, (decodedAudio) => {
+                    const source = audioContext.createBufferSource()
+                    source.buffer = decodedAudio
+                    source.connect(audioContext.destination)
+                    if (nextStartTime<audioContext.currentTime){
+                        nextStartTime=audioContext.currentTime
+                    }
+                    source.start(nextStartTime)
+                    nextStartTime+= source.buffer.duration
+                })
+            
         })
-        audio.play().catch(() => {})
-        })
-
 </script>
