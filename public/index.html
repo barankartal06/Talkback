@@ -1,33 +1,19 @@
 <h1>Talkback</h1>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const audioContext = new AudioContext()
-    const socket = io()
-    const name= prompt('what is your name?')
-    socket.emit('join', name)
-    navigator.mediaDevices.getUserMedia({audio: true})
-        .then((stream)=> {
-            const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
-            recorder.start(250)
-            recorder.ondataavailable = (event) => {
-                socket.emit('audio', event.data)}
-                }
-        )
-    const audio = new Audio()
-    const mediaSource = new MediaSource()
-    audio.src = URL.createObjectURL(mediaSource)
-    mediaSource.addEventListener('sourceopen', () => {
-        const sourceBuffer = mediaSource.addSourceBuffer('audio/webm;codecs=opus')
-        const queue = []
-        const appendNext = () => {
-            if (!sourceBuffer.updating && queue.length > 0 && mediaSource.readyState==="open"){
-                sourceBuffer.appendBuffer(queue.shift())}}
-        sourceBuffer.addEventListener('updateend', appendNext)        
-        socket.on('audio', (data) => { 
-            queue.push(data)
-            appendNext()
-        })
-        audio.play().catch(() => {})
-        })
+    (async() => {
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true})
+        const socket = io()
+        const name= prompt('what is your name?')
+        socket.emit('join', name)
+        const connections = {} 
 
+        socket.on('existing-peers', (peers)=>{
+        for (const id in peers){
+            const pc = RTCPeerConnection()
+            connections[id]= pc
+            stream.getTracks().forEach(track=> pc.addTrack(track, stream))
+        } 
+        })
+    })()
 </script>

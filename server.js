@@ -1,4 +1,5 @@
 const port= 8080
+const peers= {}
 const express= require('express')
 const app= express()
 
@@ -17,13 +18,28 @@ server.listen(port,() => {
 })
 
 io.on('connection', (socket)=> {
+
     socket.on('join',(name)=> {
         socket.name=name
+        socket.emit('existing-peers', peers )
         console.log(name, 'joined the session.')
+        peers[socket.id]=socket.name
     })
-    socket.on('audio',(data)=> {
-        socket.broadcast.emit('audio', data)
-        }
-)
-    socket.on('disconnect',()=> console.log(socket.name, 'left the session.'))
+
+    socket.on('offer',(offer, targetId)=>{
+        io.to(targetId).emit('offer', offer, socket.id)
+    })
+
+    socket.on('answer',(answer, targetId)=>{
+        io.to(targetId).emit('answer', answer, socket.id)
+    })
+
+    socket.on('ice-candidate',(iceCandidate, targetId)=>{
+        io.to(targetId).emit('ice-candidate', iceCandidate, socket.id)
+    })
+    
+    socket.on('disconnect',()=>{ 
+        console.log(socket.name, 'left the session.')
+        delete peers[socket.id]
+        })
     })
