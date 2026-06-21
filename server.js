@@ -6,6 +6,8 @@ const app= express()
 const http= require('http')
 const server= http.createServer(app)
 
+const ngrok = require('@ngrok/ngrok')
+
 const { Server } = require('socket.io')
 const io = new Server(server, {
     maxHttpBufferSize: 1e8
@@ -13,8 +15,10 @@ const io = new Server(server, {
 app.use(express.static('public'))
 
 
-server.listen(port,() => {
+server.listen(port, async () => {
     console.log('server running on port', port)
+    const listener = await ngrok.connect({ addr: port, authtoken: '3FRYnLD8I3wrd5c9eDFHnOmOUvn_2e4nB1VVMQZD4LLeDimN9' })
+    console.log('ngrok url: ', listener.url())
 })
 
 io.on('connection', (socket)=> {
