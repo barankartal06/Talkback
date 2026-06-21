@@ -1,0 +1,23 @@
+<h1>Dashboard</h1>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script> 
+
+    const socket = io()
+    socket.emit('join-dashboard')
+    socket.on('peers-update',(peers)=>{
+        const div = document.getElementById('peers-list')
+        div.innerHTML = ''
+        for (const id in peers){
+            const name = peers[id]
+            div.innerHTML += '<p>'+ name + '<p/>'
+        }    
+    })
+
+    socket.on('ngrok-url',(ngrokUrl)=>{
+        new QRCode(document.getElementById('qrcode'), ngrokUrl)
+    })
+
+</script>
+<div id="qrcode"></div>
+<div id="peers-list"></div>
