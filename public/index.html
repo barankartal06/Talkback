@@ -8,12 +8,60 @@
         socket.emit('join', name)
         const connections = {} 
 
-        socket.on('existing-peers', (peers)=>{
+        socket.on('existing-peers', async (peers)=>{
         for (const id in peers){
-            const pc = RTCPeerConnection()
+            const pc = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            })
             connections[id]= pc
+            pc.ontrack = (e) => {
+                const audio = new Audio()
+                audio.srcObject = e.streams[0]
+                audio.play()}
             stream.getTracks().forEach(track=> pc.addTrack(track, stream))
+
+            const offer = await pc.createOffer()
+            await pc.setLocalDescription(offer)
+            socket.emit('offer', offer, id)
+
+            pc.onicecandidate = (ev) => {
+                if (ev.candidate != null){
+                    socket.emit('ice-candidate', ev.candidate, id) 
+                }}
         } 
         })
+
+        socket.on('offer', async (offer, senderId)=> {
+            const pc = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            })
+            connections[senderId] = pc
+            pc.ontrack = (e) => {
+                const audio = new Audio()
+                audio.srcObject = e.streams[0]
+                audio.play()}
+            stream.getTracks().forEach(track=> pc.addTrack(track, stream))
+
+            pc.onicecandidate = (ev) => {
+                if (ev.candidate != null){
+                    socket.emit('ice-candidate', ev.candidate, senderId) 
+                }}
+
+            await pc.setRemoteDescription(offer)
+            const answer = await pc.createAnswer()
+            await pc.setLocalDescription(answer)
+            socket.emit('answer', answer, senderId)
+        })
+
+        socket.on('answer', async (answer, senderId)=> {
+            const pc = connections[senderId]
+            await pc.setRemoteDescription(answer)
+        })
+
+        socket.on('ice-candidate', async (candidate, sourceId)=> {
+            const pc = connections[sourceId]
+            await pc.addIceCandidate(candidate)
+        })
+
     })()
 </script>
