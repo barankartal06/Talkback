@@ -1,8 +1,9 @@
 <h1>Talkback</h1>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    let stream 
     (async() => {
-        const stream = await navigator.mediaDevices.getUserMedia({audio:true})
+        stream = await navigator.mediaDevices.getUserMedia({audio:true})
         const socket = io()
         const name= prompt('what is your name?')
         socket.emit('join', name)
@@ -65,3 +66,19 @@
 
     })()
 </script>
+<script>
+    let muted = false
+    function toggleMute(){
+        if (muted){
+            stream.getAudioTracks()[0].enabled = true
+            muted = !(muted)
+        }else{
+            stream.getAudioTracks()[0].enabled = false
+            muted = !(muted)
+        }
+        document.getElementById('mute-status').textContent = muted ? 'Muted' : 'Live'
+    }
+</script>
+<p id="mute-status">Live</p>
+<button onclick="toggleMute()">Mute/Unmute</button>
+
