@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #F5F5F5;
+    color: #111111;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── INDEX (mobile) ── */
+
+.talkback-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+}
+
+.talkback-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.talkback-logo {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+}
+
+.talkback-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #888;
+}
+
+.talkback-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.mute-status {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #111;
+    transition: color 0.15s;
+}
+
+.mute-status.is-muted {
+    color: #E03000;
+}
+
+.mute-btn {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: none;
+    background: #E03000;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.mute-btn:active {
+    transform: scale(0.95);
+}
+
+.mute-btn.is-muted {
+    background: #888;
+}
+
+.talkback-footer {
+    font-size: 0.75rem;
+    color: #bbb;
+    letter-spacing: 0.04em;
+}
+
+/* ── DASHBOARD (laptop) ── */
+
+.dashboard-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.dashboard-logo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dashboard-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.dashboard-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #E8E8E8;
+    padding: 1.75rem;
+}
+
+.dashboard-card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 1.25rem;
+}
+
+#qrcode {
+    display: flex;
+    justify-content: center;
+}
+
+#qrcode canvas,
+#qrcode img {
+    border-radius: 8px;
+}
+
+.peers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.peer-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #F5F5F5;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.peer-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2ECC71;
+    flex-shrink: 0;
+}
+
+.peers-empty {
+    font-size: 0.875rem;
+    color: #bbb;
+    text-align: center;
+    padding: 2rem 0;
+}

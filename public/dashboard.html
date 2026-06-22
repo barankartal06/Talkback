@@ -1,23 +1,62 @@
-<h1>Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talkback — Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="dashboard-page">
+
+    <header class="dashboard-header">
+        <span class="dashboard-logo">Talkback</span>
+        <span class="dashboard-label">Host Dashboard</span>
+    </header>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <p class="dashboard-card-title">Scan to join</p>
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="dashboard-card">
+            <p class="dashboard-card-title">Connected peers</p>
+            <div class="peers-list" id="peers-list">
+                <p class="peers-empty">No peers connected yet</p>
+            </div>
+        </div>
+        <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #555; line-height: 1.6; background: #fff; border: 1px solid #E8E8E8; border-radius: 8px; padding: 1rem 1.25rem; max-height: 160px; overflow-y: auto; white-space: pre-wrap;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus accusamus deleniti, ipsum, dolorum adipisci nemo omnis vero ad impedit nisi sunt assumenda saepe inventore earum maxime vel ipsa veniam nulla?</p>
+    </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script> 
-
+<script>
     const socket = io()
     socket.emit('join-dashboard')
-    socket.on('peers-update',(peers)=>{
+
+    socket.on('peers-update', (peers) => {
         const div = document.getElementById('peers-list')
+        const ids = Object.keys(peers)
+        if (ids.length === 0) {
+            div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
+            return
+        }
         div.innerHTML = ''
-        for (const id in peers){
-            const name = peers[id]
-            div.innerHTML += '<p>'+ name + '<p/>'
-        }    
+        for (const id in peers) {
+            div.innerHTML += `
+                <div class="peer-item">
+                    <span class="peer-dot"></span>
+                    <span>${peers[id]}</span>
+                </div>`
+        }
     })
 
-    socket.on('ngrok-url',(ngrokUrl)=>{
+    socket.on('ngrok-url', (ngrokUrl) => {
         new QRCode(document.getElementById('qrcode'), ngrokUrl)
     })
-
 </script>
-<div id="qrcode"></div>
-<div id="peers-list"></div>
+</body>
+</html>
