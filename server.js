@@ -43,16 +43,8 @@ io.on('connection', (socket)=> {
         socket.name='DASHBOARD'
     })
 
-    socket.on('offer',(offer, targetId)=>{
-        io.to(targetId).emit('offer', offer, socket.id)
-    })
-
-    socket.on('answer',(answer, targetId)=>{
-        io.to(targetId).emit('answer', answer, socket.id)
-    })
-
-    socket.on('ice-candidate',(iceCandidate, targetId)=>{
-        io.to(targetId).emit('ice-candidate', iceCandidate, socket.id)
+    socket.on('signal', ({type, payload, targetId})=> {
+        io.to(targetId).emit('signal', {type, payload, from: socket.id})
     })
     
     socket.on('disconnect',()=>{ 
