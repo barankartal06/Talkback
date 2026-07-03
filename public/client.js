@@ -1,9 +1,63 @@
-let stream;
+const nameInput = document.getElementById('name-input')
+const nameHint= document.getElementById('name-hint')
+const createBtn = document.getElementById('create-btn')
+const joinBtn = document.getElementById('join-btn')
+const codeInput = document.getElementById('code-input')
+const entrySplit = document.querySelector('.entry-split')
+const entryError = document.getElementById('entry-error')
+const entryView = document.getElementById('entry-view')
+const roomView = document.getElementById('room-view')
+const displayName = document.getElementById('display-name')
 
+function refreshEntryState(){
+    const hasName = nameInput.value.trim().length > 0
+    createBtn.disabled = !hasName
+    joinBtn.disabled = !hasName
+}
+nameInput.addEventListener('input', refreshEntryState)
+
+async function enterRoom(name) {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    entryView.classList.add('hidden')
+    roomView.classList.remove('hidden')
+    document.getElementById('display-name').textContent = name
+}
+
+createBtn.addEventListener('click', async () => {
+    myName = nameInput.value.trim()
+    if (!myName) return
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    socket.emit('create', { myName })
+})
+
+joinBtn.addEventListener('click', async () => {
+    const revealed = entrySplit.classList.contains('join-only')
+    if (!revealed) {
+        entrySplit.classList.add('join-only')
+        codeInput.classList.remove('hidden')
+        codeInput.focus()
+        return
+    }
+    myName = nameInput.value.trim()
+    const code = codeInput.value.trim()
+    if (!myName || code.length !== 6) return
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    socket.emit('join', {code, name: myName})
+})
+
+let myName;
+let stream;
 const socket = io()
 const connections = {}
 
-socket.on('existing-peers', async (peers) => {
+socket.on('room-info', ({ code }) => {
+    console.log('room created, code:', code)
+})
+
+socket.on('existing-peers', async ({peers}) => {
+    entryView.classList.add('hidden')
+    roomView.classList.remove('hidden')
+    displayName.textContent = myName
     for (const id in peers) {
         const pc = new RTCPeerConnection({
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]

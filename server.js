@@ -20,6 +20,7 @@ function addPeerToRoom(socket, code, name) {
     socket.emit('existing-peers', { peers : rooms[code].peers })
     rooms[code].peers[socket.id] = { name }
     socket.join(code)
+    console.log(name, 'entered room no:', code)
     socket.code = code
     io.to(code).emit('peers-update',{ peers: rooms[code].peers })
 }
@@ -78,7 +79,7 @@ io.on('connection', (socket)=> {
     socket.on('disconnect',()=>{ 
         const code = socket.code
         if (rooms[code]!= null){
-            console.log(rooms[code].peers[socket.id].name, 'left the session.')
+            console.log(rooms[code].peers[socket.id].name, 'left room no:', code)
             delete rooms[code].peers[socket.id]
             io.to(code).emit('peers-update', {peers: rooms[code].peers})
         }
