@@ -1,12 +1,6 @@
 require('dotenv').config()
 const port= 8080
-rooms = {
-  "<code>": {
-    peers: {
-      "<socketId>": { name: null }  
-    }
-  }
-}
+const rooms = {}
 
 function generateRoomCode() {
     let code = ''
