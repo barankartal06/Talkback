@@ -26,18 +26,23 @@ body {
 }
 
 .talkback-header {
+    position: relative;              /* anchor for the absolutely-centered logo */
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between;  /* code pinned left, name pinned right */
 }
 
 .talkback-logo {
+    position: absolute;              /* lifted out of the flex flow */
+    left: 50%;
+    transform: translateX(-50%);     /* true center, regardless of side widths */
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #111;
+    pointer-events: none;            /* clicks pass through to whatever's behind */
 }
 
 .talkback-name {
@@ -413,4 +418,29 @@ body {
     color: #E03000;
     text-align: center;
     margin-top: 1rem;
+}
+
+.talkback-code {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;          /* spreads the digits so a code reads clearly */
+    color: #888;
+    background: transparent;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 0.375rem 0.625rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.talkback-code:hover {
+    border-color: #111;
+    color: #111;
+}
+
+.talkback-code:active {
+    transform: scale(0.97);
 }

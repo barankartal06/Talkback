@@ -1,3 +1,9 @@
+let myName;
+let roomCode;
+let stream;
+const socket = io()
+const connections = {}
+
 const nameInput = document.getElementById('name-input')
 const nameHint= document.getElementById('name-hint')
 const createBtn = document.getElementById('create-btn')
@@ -8,6 +14,7 @@ const entryError = document.getElementById('entry-error')
 const entryView = document.getElementById('entry-view')
 const roomView = document.getElementById('room-view')
 const displayName = document.getElementById('display-name')
+const codeBtn = document.getElementById('code-btn')
 
 function refreshEntryState(){
     const hasName = nameInput.value.trim().length > 0
@@ -16,18 +23,12 @@ function refreshEntryState(){
 }
 nameInput.addEventListener('input', refreshEntryState)
 
-async function enterRoom(name) {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    entryView.classList.add('hidden')
-    roomView.classList.remove('hidden')
-    document.getElementById('display-name').textContent = name
-}
 
 createBtn.addEventListener('click', async () => {
     myName = nameInput.value.trim()
     if (!myName) return
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    socket.emit('create', { myName })
+    socket.emit('create', { name: myName })
 })
 
 joinBtn.addEventListener('click', async () => {
@@ -45,16 +46,16 @@ joinBtn.addEventListener('click', async () => {
     socket.emit('join', {code, name: myName})
 })
 
-let myName;
-let stream;
-const socket = io()
-const connections = {}
+
 
 socket.on('room-info', ({ code }) => {
+    roomCode = code
     console.log('room created, code:', code)
 })
 
-socket.on('existing-peers', async ({peers}) => {
+socket.on('existing-peers', async ({peers, code}) => {
+    roomCode = code
+    codeBtn.textContent = roomCode
     entryView.classList.add('hidden')
     roomView.classList.remove('hidden')
     displayName.textContent = myName
@@ -76,6 +77,16 @@ socket.on('existing-peers', async ({peers}) => {
             if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: id})
         }
     }
+})
+
+socket.on('error', ({ reason, message }) => {
+    if (reason === 'ROOM_NOT_FOUND'){
+        if(stream){
+            stream.getTracks().forEach(t => t.stop())
+            stream = null}
+        entryError.textContent = message
+        entryError.classList.remove('hidden')}
+    
 })
 
 async function handleOffer(offer, senderId) {

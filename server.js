@@ -17,7 +17,7 @@ function generateRoomCode() {
 }
 
 function addPeerToRoom(socket, code, name) {
-    socket.emit('existing-peers', { peers : rooms[code].peers })
+    socket.emit('existing-peers', { peers : rooms[code].peers, code })
     rooms[code].peers[socket.id] = { name }
     socket.join(code)
     console.log(name, 'entered room no:', code)
