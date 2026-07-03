@@ -1,6 +1,30 @@
 require('dotenv').config()
 const port= 8080
-const peers= {}
+rooms = {
+  "<code>": {
+    peers: {
+      "<socketId>": { name: null }  
+    }
+  }
+}
+
+function generateRoomCode() {
+    let code = ''
+    do{
+        code= String(Math.floor(Math.random() * 1000000)).padStart(6, "0")
+    }while(code in rooms)
+    return code
+}
+
+function addPeerToRoom(socket, code, name) {
+    socket.emit('existing-peers', { peers : rooms[code].peers, code })
+    rooms[code].peers[socket.id] = { name }
+    socket.join(code)
+    console.log(name, 'entered room no:', code)
+    socket.code = code
+    io.to(code).emit('peers-update',{ peers: rooms[code].peers })
+}
+
 let dashboardSocket = null
 const express= require('express')
 const app= express()
@@ -27,13 +51,18 @@ server.listen(port, async () => {
 
 io.on('connection', (socket)=> {
 
-    socket.on('join',(name)=> {
-        socket.name=name
-        socket.emit('existing-peers', peers )
-        console.log(name, 'joined the session.')
-        peers[socket.id]=socket.name
-        if (dashboardSocket != null){
-            dashboardSocket.emit('peers-update', peers)
+    socket.on('create', ( {name} )=>{
+        const code = generateRoomCode()
+        rooms[code]= {peers: {} }
+        addPeerToRoom(socket, code, name)
+        socket.emit('room-info', {code})
+    })
+
+    socket.on('join',({code, name})=> {
+        if (code in rooms) {
+            addPeerToRoom(socket, code, name)
+        } else {
+            socket.emit('error', { reason: 'ROOM_NOT_FOUND', message: 'Room not found' })
         }
     })
 
@@ -48,10 +77,11 @@ io.on('connection', (socket)=> {
     })
     
     socket.on('disconnect',()=>{ 
-        console.log(socket.name, 'left the session.')
-        delete peers[socket.id]
-        if (dashboardSocket != null){
-            dashboardSocket.emit('peers-update', peers)
+        const code = socket.code
+        if (rooms[code]!= null){
+            console.log(rooms[code].peers[socket.id].name, 'left room no:', code)
+            delete rooms[code].peers[socket.id]
+            io.to(code).emit('peers-update', {peers: rooms[code].peers})
         }
         })
     })
