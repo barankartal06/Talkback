@@ -1,68 +1,63 @@
 let stream;
 
-(async () => {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    const socket = io()
-    const name = prompt('What is your name?')
-    document.getElementById('display-name').textContent = name
-    socket.emit('join', name)
-    const connections = {}
+const socket = io()
+const connections = {}
 
-    socket.on('existing-peers', async (peers) => {
-        for (const id in peers) {
-            const pc = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-            })
-            connections[id] = pc
-            pc.ontrack = (e) => {
-                const audio = new Audio()
-                audio.srcObject = e.streams[0]
-                audio.play()
-            }
-            stream.getTracks().forEach(track => pc.addTrack(track, stream))
-            const offer = await pc.createOffer()
-            await pc.setLocalDescription(offer)
-            socket.emit('signal', {type: 'offer',payload: offer, targetId: id})
-            pc.onicecandidate = (ev) => {
-                if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: id})
-            }
-        }
-    })
-
-    async function handleOffer(offer, senderId) {
+socket.on('existing-peers', async (peers) => {
+    for (const id in peers) {
         const pc = new RTCPeerConnection({
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
         })
-        connections[senderId] = pc
+        connections[id] = pc
         pc.ontrack = (e) => {
             const audio = new Audio()
             audio.srcObject = e.streams[0]
             audio.play()
         }
         stream.getTracks().forEach(track => pc.addTrack(track, stream))
+        const offer = await pc.createOffer()
+        await pc.setLocalDescription(offer)
+        socket.emit('signal', {type: 'offer',payload: offer, targetId: id})
         pc.onicecandidate = (ev) => {
-            if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: senderId})
+            if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: id})
         }
-        await pc.setRemoteDescription(offer)
-        const answer = await pc.createAnswer()
-        await pc.setLocalDescription(answer)
-        socket.emit('signal', {type: 'answer', payload: answer, targetId: senderId})
     }
+})
 
-    async function handleAnswer(answer, senderId){
-        await connections[senderId].setRemoteDescription(answer)
-    }
-
-    async function handleIceCandidate(candidate, sourceId){
-        await connections[sourceId].addIceCandidate(candidate)
-    }
-
-    socket.on('signal', async ({ type, payload, from }) => {
-        if (type === 'offer') await handleOffer(payload, from)
-        else if (type === 'answer') await handleAnswer(payload, from)
-        else if (type === 'ice-candidate') await handleIceCandidate(payload, from)
+async function handleOffer(offer, senderId) {
+    const pc = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     })
-})()
+    connections[senderId] = pc
+    pc.ontrack = (e) => {
+        const audio = new Audio()
+        audio.srcObject = e.streams[0]
+        audio.play()
+    }
+    stream.getTracks().forEach(track => pc.addTrack(track, stream))
+    pc.onicecandidate = (ev) => {
+        if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: senderId})
+    }
+    await pc.setRemoteDescription(offer)
+    const answer = await pc.createAnswer()
+    await pc.setLocalDescription(answer)
+    socket.emit('signal', {type: 'answer', payload: answer, targetId: senderId})
+}
+
+async function handleAnswer(answer, senderId){
+    await connections[senderId].setRemoteDescription(answer)
+}
+
+async function handleIceCandidate(candidate, sourceId){
+    await connections[sourceId].addIceCandidate(candidate)
+}
+
+socket.on('signal', async ({ type, payload, from }) => {
+    if (type === 'offer') await handleOffer(payload, from)
+    else if (type === 'answer') await handleAnswer(payload, from)
+    else if (type === 'ice-candidate') await handleIceCandidate(payload, from)
+})
+
 
 let muted = false
 
