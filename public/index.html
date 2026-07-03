@@ -7,7 +7,61 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<div class="talkback-page">
+
+<!-- ENTRY VIEW -->
+<div id="entry-view" class="entry">
+
+    <div class="entry-brand">Talkback</div>
+
+    <div class="entry-card">
+        <label class="field-label" for="name-input">Your name</label>
+        <input
+            id="name-input"
+            class="name-input"
+            type="text"
+            placeholder="e.g. Baran"
+            autocomplete="off"
+            maxlength="24"
+        >
+        <p class="field-hint" id="name-hint">Enter a name to continue</p>
+
+        <div class="entry-split">
+
+            <div class="split-section split-create">
+                <p class="split-title">Start a room</p>
+                <p class="split-sub">Get a code others can join with</p>
+                <button id="create-btn" class="action-btn action-create" disabled>
+                    Create room
+                </button>
+            </div>
+
+            <div class="split-divider"><span>or</span></div>
+
+            <div class="split-section split-join" id="join-section">
+                <p class="split-title">Join a room</p>
+                <p class="split-sub">Enter the 6-digit code</p>
+                <input
+                    id="code-input"
+                    class="code-input hidden"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="000000"
+                    maxlength="6"
+                >
+                <button id="join-btn" class="action-btn action-join" disabled>
+                    Join room
+                </button>
+            </div>
+
+        </div>
+
+        <p class="entry-error hidden" id="entry-error"></p>
+    </div>
+
+</div>
+
+<!-- ROOM VIEW -->
+<div id="room-view" class="talkback-page hidden">
 
     <header class="talkback-header">
         <span class="talkback-logo">Talkback</span>
@@ -17,7 +71,7 @@
     <div class="talkback-center">
         <p class="mute-status" id="mute-status">Live</p>
         <button class="mute-btn" id="mute-btn" onclick="toggleMute()">Mute</button>
-        <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #555; line-height: 1.6; background: #fff; border: 1px solid #E8E8E8; border-radius: 8px; padding: 1rem 1.25rem; max-height: 160px; overflow-y: auto; white-space: pre-wrap;">1-Madem, 2-Son Arzum, 3-Tek Başına, 4-Ask Nerede, 5-Daha Mutlu Olamam, 6-Cevapsız Sorular, 7-Careless Whisper</p>
+        <div class="setlist" id="setlist">1-Madem, 2-Son Arzum, 3-Tek Başına, 4-Ask Nerede, 5-Daha Mutlu Olamam, 6-Cevapsız Sorular, 7-Careless Whisper</div>
     </div>
 
     <footer class="talkback-footer">tap to mute</footer>
@@ -25,101 +79,6 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    let stream
-
-    (async () => {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        const socket = io()
-        const name = prompt('What is your name?')
-        document.getElementById('display-name').textContent = name
-        socket.emit('join', name)
-        const connections = {}
-
-        socket.on('existing-peers', async (peers) => {
-            for (const id in peers) {
-                const pc = new RTCPeerConnection({
-                    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-                })
-                connections[id] = pc
-                pc.ontrack = (e) => {
-                    const audio = new Audio()
-                    audio.srcObject = e.streams[0]
-                    audio.play()
-                }
-                stream.getTracks().forEach(track => pc.addTrack(track, stream))
-                const offer = await pc.createOffer()
-                await pc.setLocalDescription(offer)
-                socket.emit('signal', {type: 'offer',payload: offer, targetId: id})
-                pc.onicecandidate = (ev) => {
-                    if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: id})
-                }
-            }
-        })
-
-        async function handleOffer(offer, senderId) {
-            const pc = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-            })
-            connections[senderId] = pc
-            pc.ontrack = (e) => {
-                const audio = new Audio()
-                audio.srcObject = e.streams[0]
-                audio.play()
-            }
-            stream.getTracks().forEach(track => pc.addTrack(track, stream))
-            pc.onicecandidate = (ev) => {
-                if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: senderId})
-            }
-            await pc.setRemoteDescription(offer)
-            const answer = await pc.createAnswer()
-            await pc.setLocalDescription(answer)
-            socket.emit('signal', {type: 'answer', payload: answer, targetId: senderId})
-        }
-
-        async function handleAnswer(answer, senderId){
-            await connections[senderId].setRemoteDescription(answer)
-        }
-
-        async function handleIceCandidate(candidate, sourceId){
-            await connections[sourceId].addIceCandidate(candidate)
-        }
-
-        socket.on('signal', async ({ type, payload, from }) => {
-            if (type === 'offer') await handleOffer(payload, from)
-            else if (type === 'answer') await handleAnswer(payload, from)
-            else if (type === 'ice-candidate') await handleIceCandidate(payload, from)
-        })
-    })()
-</script>
-<script>
-    let muted = false
-
-    function toggleMute() {
-        if (muted) {
-            stream.getAudioTracks()[0].enabled = true
-            muted = false
-        } else {
-            stream.getAudioTracks()[0].enabled = false
-            muted = true
-        }
-        const status = document.getElementById('mute-status')
-        const btn = document.getElementById('mute-btn')
-        const footer = document.querySelector('.talkback-footer')
-        if (muted) {
-            status.textContent = 'Muted'
-            status.classList.add('is-muted')
-            btn.textContent = 'Unmute'
-            btn.classList.add('is-muted')
-            footer.textContent = 'tap to unmute'
-        } else {
-            status.textContent = 'Live'
-            status.classList.remove('is-muted')
-            btn.textContent = 'Mute'
-            btn.classList.remove('is-muted')
-            footer.textContent = 'tap to mute'
-        }
-    }
-</script>
+<script src="/client.js" defer></script>
 </body>
 </html>
