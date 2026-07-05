@@ -55,6 +55,10 @@ io.on('connection', (socket)=> {
     socket.on('join',({code, name})=> {
         if (code in rooms) {
             addPeerToRoom(socket, code, name)
+            if(rooms[code].deathTimer){
+                clearTimeout(rooms[code].deathTimer)
+                rooms[code].deathTimer = null
+            }
         } else {
             socket.emit('error', { reason: 'ROOM_NOT_FOUND', message: 'Room not found' })
         }
@@ -75,7 +79,14 @@ io.on('connection', (socket)=> {
         if (rooms[code]!= null){
             console.log(rooms[code].peers[socket.id].name, 'left room no:', code)
             delete rooms[code].peers[socket.id]
-            io.to(code).emit('peers-update', {peers: rooms[code].peers})
+            if (Object.keys(rooms[code].peers).length === 0 ) {
+                rooms[code].deathTimer = setTimeout(() => {
+                    delete rooms[code]
+                    console.log('room reaped:', code)
+                }, 60000)
+            }else {
+                io.to(code).emit('peers-update', {peers: rooms[code].peers})
+            }
         }
         })
     })
