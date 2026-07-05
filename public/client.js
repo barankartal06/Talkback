@@ -15,6 +15,19 @@ const entryView = document.getElementById('entry-view')
 const roomView = document.getElementById('room-view')
 const displayName = document.getElementById('display-name')
 const codeBtn = document.getElementById('code-btn')
+const qrContainer = document.getElementById('qr-container')
+const shareCode = document.getElementById('share-code')
+const sharePanel = document.getElementById('share-panel')
+const shareBackdrop = document.getElementById('share-backdrop')
+const shareClose = document.getElementById('share-close')
+
+const roomParam = new URLSearchParams(window.location.search).get('room')
+if (roomParam) {
+    entrySplit.classList.add('join-only')
+    codeInput.classList.remove('hidden')
+    codeInput.value = roomParam
+    nameInput.focus()
+}
 
 function refreshEntryState(){
     const hasName = nameInput.value.trim().length > 0
@@ -46,7 +59,24 @@ joinBtn.addEventListener('click', async () => {
     socket.emit('join', {code, name: myName})
 })
 
+codeBtn.addEventListener('click', () =>{
+    const shareUrl = `${window.location.origin}/?room=${roomCode}`
+    qrContainer.innerHTML = ''
+    new QRCode(qrContainer, { text: shareUrl, width: 200, height: 200 })
+    shareCode.textContent = roomCode
+    sharePanel.classList.add('open')
+    shareBackdrop.classList.remove('hidden')
+})
 
+shareClose.addEventListener('click', () =>{
+    sharePanel.classList.remove('open')
+    shareBackdrop.classList.add('hidden')
+})
+
+shareBackdrop.addEventListener('click', () =>{
+    sharePanel.classList.remove('open')
+    shareBackdrop.classList.add('hidden')
+})
 
 socket.on('room-info', ({ code }) => {
     roomCode = code

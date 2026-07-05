@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talkback</title>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -76,6 +77,15 @@
     </div>
 
     <footer class="talkback-footer">tap to mute</footer>
+
+    <div id="share-backdrop" class="share-backdrop hidden"></div>
+    <aside id="share-panel" class="share-panel">
+        <button id="share-close" class="share-close" aria-label="Close">&times;</button>
+        <h2 class="share-title">Invite</h2>
+        <div id="qr-container" class="qr-container"></div>
+        <p class="share-hint">Scan to join, or enter the code:</p>
+        <p id="share-code" class="share-code-display"></p>
+    </aside>
 
 </div>
 
