@@ -20,6 +20,7 @@ const shareCode = document.getElementById('share-code')
 const sharePanel = document.getElementById('share-panel')
 const shareBackdrop = document.getElementById('share-backdrop')
 const shareClose = document.getElementById('share-close')
+const div = document.getElementById('peers-list')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -108,6 +109,22 @@ socket.on('existing-peers', async ({peers, code}) => {
         }
     }
 })
+
+socket.on('peers-update', ({peers}) => {
+        const ids = Object.keys(peers)
+        if (ids.length === 0) {
+            div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
+            return
+        }
+        div.innerHTML = ''
+        for (const id in peers) {
+            div.innerHTML += `
+                <div class="peer-item">
+                    <span class="peer-dot"></span>
+                    <span>${peers[id].name}</span>
+                </div>`
+        }
+    })
 
 socket.on('error', ({ reason, message }) => {
     if (reason === 'ROOM_NOT_FOUND'){
