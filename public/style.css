@@ -534,3 +534,34 @@ body {
     color: #111;
     margin: 0;
 }
+
+.join-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.back-btn {
+    display: none;
+}
+.entry-split.join-only .back-btn {
+    display: inline-flex;
+}
+
+.back-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-left: auto;
+    color: inherit;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+}
+.back-btn:hover {
+    opacity: 1;
+}
+.entry-split.join-only .back-btn {
+    display: inline-flex;
+    align-items: center;
+}

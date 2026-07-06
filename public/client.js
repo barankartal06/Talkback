@@ -21,6 +21,7 @@ const sharePanel = document.getElementById('share-panel')
 const shareBackdrop = document.getElementById('share-backdrop')
 const shareClose = document.getElementById('share-close')
 const div = document.getElementById('peers-list')
+const backBtn = document.getElementById('back-btn')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -59,6 +60,12 @@ joinBtn.addEventListener('click', async () => {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     socket.emit('join', {code, name: myName})
 })
+
+backBtn.addEventListener('click', () => {
+    entrySplit.classList.remove('join-only');
+    codeInput.classList.add('hidden');
+    codeInput.value = '';
+});
 
 codeBtn.addEventListener('click', () =>{
     const shareUrl = `${window.location.origin}/?room=${roomCode}`
