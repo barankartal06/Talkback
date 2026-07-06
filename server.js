@@ -19,6 +19,22 @@ function addPeerToRoom(socket, code, name) {
     io.to(code).emit('peers-update',{ peers: rooms[code].peers })
 }
 
+function removePeerFromRoom(socket){
+    const code = socket.code
+        if (rooms[code]!= null){
+            console.log(rooms[code].peers[socket.id].name, 'left room no:', code)
+            delete rooms[code].peers[socket.id]
+            if (Object.keys(rooms[code].peers).length === 0 ) {
+                rooms[code].deathTimer = setTimeout(() => {
+                    delete rooms[code]
+                    console.log('room reaped:', code)
+                }, 60000)
+            }else {
+                io.to(code).emit('peers-update', {peers: rooms[code].peers})
+            }
+        }
+}
+
 let dashboardSocket = null
 const express= require('express')
 const app= express()
@@ -75,18 +91,13 @@ io.on('connection', (socket)=> {
     })
     
     socket.on('disconnect',()=>{ 
-        const code = socket.code
-        if (rooms[code]!= null){
-            console.log(rooms[code].peers[socket.id].name, 'left room no:', code)
-            delete rooms[code].peers[socket.id]
-            if (Object.keys(rooms[code].peers).length === 0 ) {
-                rooms[code].deathTimer = setTimeout(() => {
-                    delete rooms[code]
-                    console.log('room reaped:', code)
-                }, 60000)
-            }else {
-                io.to(code).emit('peers-update', {peers: rooms[code].peers})
-            }
-        }
-        })
+        removePeerFromRoom(socket)
+    })
+
+    socket.on('leave', () => {
+        removePeerFromRoom(socket)
+        socket.code = null
+    })
+
+
     })

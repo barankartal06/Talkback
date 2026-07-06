@@ -22,6 +22,9 @@ const shareBackdrop = document.getElementById('share-backdrop')
 const shareClose = document.getElementById('share-close')
 const div = document.getElementById('peers-list')
 const backBtn = document.getElementById('back-btn')
+const exitToggle = document.getElementById('exit-toggle')
+const exitMenu = document.getElementById('exit-menu')
+const leaveBtn = document.getElementById('leave-btn')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -30,6 +33,49 @@ if (roomParam) {
     codeInput.value = roomParam
     nameInput.focus()
 }
+
+function leaveRoom(){
+    collapseExitMenu()
+
+    for (const id in connections){
+        connections[id].close()
+        delete connections[id]
+    }
+
+    if(stream){
+        stream.getTracks().forEach(t => t.stop())
+        stream = null
+    }
+
+    socket.emit('leave')
+
+    roomView.classList.add('hidden')
+    entryView.classList.remove('hidden')
+
+    div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
+
+    entrySplit.classList.remove('join-only');
+    codeInput.classList.add('hidden');
+    codeInput.value = '';
+}
+
+function collapseExitMenu() {
+    exitMenu.classList.add('hidden');
+    exitToggle.classList.remove('hidden');
+    document.removeEventListener('click', onOutsideClick);
+}
+function onOutsideClick(e) {
+    // if the click is outside the menu, collapse
+    if (!exitMenu.contains(e.target)) {
+        collapseExitMenu();
+    }
+}
+exitToggle.addEventListener('click', (e) => {
+    e.stopPropagation();               // don't let this click reach document
+    exitToggle.classList.add('hidden');
+    exitMenu.classList.remove('hidden');
+    document.addEventListener('click', onOutsideClick);
+});
 
 function refreshEntryState(){
     const hasName = nameInput.value.trim().length > 0
@@ -75,6 +121,8 @@ codeBtn.addEventListener('click', () =>{
     sharePanel.classList.add('open')
     shareBackdrop.classList.remove('hidden')
 })
+
+leaveBtn.addEventListener('click', leaveRoom)
 
 shareClose.addEventListener('click', () =>{
     sharePanel.classList.remove('open')

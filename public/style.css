@@ -565,3 +565,80 @@ body {
     display: inline-flex;
     align-items: center;
 }
+
+#room-view {
+    padding-bottom: 4.5rem;
+}
+
+.room-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.75rem 1.25rem;
+    background: #F5F5F5;
+    border-top: 1px solid #E8E8E8;
+    z-index: 30;
+}
+
+.footer-actions {
+    position: relative;
+}
+
+.exit-toggle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #888;
+    background: transparent;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.exit-toggle:hover {
+    border-color: #111;
+    color: #111;
+}
+
+.exit-menu {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.exit-option {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.exit-option:active {
+    transform: scale(0.97);
+}
+
+/* Leave — neutral dark */
+#leave-btn {
+    background: #111;
+    color: #fff;
+}
+
+/* End session — red, matches your accent */
+.exit-end {
+    background: #E03000;
+    color: #fff;
+}
