@@ -34,7 +34,7 @@ if (roomParam) {
     nameInput.focus()
 }
 
-function leaveRoom(){
+function resetToEntry(){
     collapseExitMenu()
 
     for (const id in connections){
@@ -47,8 +47,6 @@ function leaveRoom(){
         stream = null
     }
 
-    socket.emit('leave')
-
     roomView.classList.add('hidden')
     entryView.classList.remove('hidden')
 
@@ -57,6 +55,11 @@ function leaveRoom(){
     entrySplit.classList.remove('join-only');
     codeInput.classList.add('hidden');
     codeInput.value = '';
+}
+
+function leaveRoom(){
+    resetToEntry()
+    socket.emit('leave')
 }
 
 function collapseExitMenu() {
