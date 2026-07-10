@@ -99,5 +99,16 @@ io.on('connection', (socket)=> {
         socket.code = null
     })
 
+    socket.on('end-session', () => {
+        const code = socket.code
+        if (rooms[code]){
+            if(rooms[code].deathTimer){
+                clearTimeout(rooms[code].deathTimer)
+                rooms[code].deathTimer = null
+            }
+            io.to(code).emit('session-ended')
+            delete rooms[code] 
+        }
+    })
 
     })

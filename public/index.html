@@ -9,6 +9,8 @@
 </head>
 <body>
 
+
+
 <!-- ENTRY VIEW -->
 <div id="entry-view" class="entry">
 
@@ -112,6 +114,17 @@
         <p id="share-code" class="share-code-display"></p>
     </aside>
 
+</div>
+
+<!-- MODAL -->
+<div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal" id="modal">
+        <p class="modal-text" id="modal-text"></p>
+        <div class="modal-actions">
+            <button id="modal-btn-1" class="modal-btn modal-btn-neutral" type="button"></button>
+            <button id="modal-btn-2" class="modal-btn modal-btn-danger hidden" type="button"></button>
+        </div>
+    </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

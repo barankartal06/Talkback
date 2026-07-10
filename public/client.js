@@ -25,6 +25,11 @@ const backBtn = document.getElementById('back-btn')
 const exitToggle = document.getElementById('exit-toggle')
 const exitMenu = document.getElementById('exit-menu')
 const leaveBtn = document.getElementById('leave-btn')
+const endBtn = document.getElementById('end-btn')
+const modalBackdrop = document.getElementById('modal-backdrop')
+const modalText = document.getElementById('modal-text')
+const modalBtn1 = document.getElementById('modal-btn-1')
+const modalBtn2 = document.getElementById('modal-btn-2')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -33,6 +38,38 @@ if (roomParam) {
     codeInput.value = roomParam
     nameInput.focus()
 }
+
+function showModal({ text, btn1Label, btn1Action, btn2Label, btn2Action }) {
+    modalText.textContent = text
+
+    modalBtn1.textContent = btn1Label
+    modalBtn1.onclick = () => {
+        hideModal()
+        if (btn1Action) btn1Action()
+    }
+
+    if (btn2Label) {
+        modalBtn2.textContent = btn2Label
+        modalBtn2.classList.remove('hidden')
+        modalBtn2.onclick = () => {
+            hideModal()
+            if (btn2Action) btn2Action()
+        }
+    } else {
+        modalBtn2.classList.add('hidden')
+        modalBtn2.onclick = null
+    }
+
+    modalBackdrop.classList.remove('hidden')
+}
+
+function hideModal() {
+    modalBackdrop.classList.add('hidden')
+}
+
+modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) hideModal()
+})
 
 function resetToEntry(){
     collapseExitMenu()
@@ -127,6 +164,16 @@ codeBtn.addEventListener('click', () =>{
 
 leaveBtn.addEventListener('click', leaveRoom)
 
+endBtn.addEventListener('click', ()=>{
+    showModal({
+        text: "Ending the session will remove everyone and close it permanently. Are you sure?",
+        btn1Label: 'Cancel',
+        btn2Label : 'End Session',
+        btn2Action: () => socket.emit('end-session')
+        
+    })
+})
+
 shareClose.addEventListener('click', () =>{
     sharePanel.classList.remove('open')
     shareBackdrop.classList.add('hidden')
@@ -166,6 +213,14 @@ socket.on('existing-peers', async ({peers, code}) => {
             if (ev.candidate != null) socket.emit('signal', {type: 'ice-candidate', payload: ev.candidate, targetId: id})
         }
     }
+})
+
+socket.on('session-ended', ()=> {
+    resetToEntry()
+    showModal({
+        text: 'This session has been ended.',
+        btn1Label: 'Dismiss'
+    })
 })
 
 socket.on('peers-update', ({peers}) => {
