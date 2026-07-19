@@ -1,8 +1,10 @@
 let myName;
 let roomCode;
 let stream;
+let currentPeers = {}
 const socket = io()
 const connections = {}
+const failedPeers = new Set()
 
 const nameInput = document.getElementById('name-input')
 const nameHint= document.getElementById('name-hint')
@@ -98,6 +100,23 @@ function resetToEntry(){
 function leaveRoom(){
     resetToEntry()
     socket.emit('leave')
+}
+
+function renderPeers(){
+    const ids = Object.keys(currentPeers)
+    capacityBanner.classList.toggle('hidden', ids.length < 6)
+    if (ids.length === 0) {
+        div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
+        return
+    }
+    div.innerHTML = ''
+    for (const id in currentPeers) {
+        div.innerHTML += `
+            <div class="peer-item">
+                <span class="peer-dot"></span>
+                <span>${currentPeers[id].name}</span>
+            </div>`
+    }
 }
 
 function collapseExitMenu() {
@@ -239,21 +258,8 @@ socket.on('hard-cap-reached', () => {
 })
 
 socket.on('peers-update', ({peers}) => {
-    console.log('peers-update fired', peers)
-        const ids = Object.keys(peers)
-        capacityBanner.classList.toggle('hidden', ids.length < 6)
-        if (ids.length === 0) {
-            div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
-            return
-        }
-        div.innerHTML = ''
-        for (const id in peers) {
-            div.innerHTML += `
-                <div class="peer-item">
-                    <span class="peer-dot"></span>
-                    <span>${peers[id].name}</span>
-                </div>`
-        }
+       currentPeers= peers
+       renderPeers()
     })
 
 socket.on('error', ({ reason, message }) => {
