@@ -70,7 +70,19 @@ io.on('connection', (socket)=> {
 
     socket.on('join',({code, name})=> {
         if (code in rooms) {
+            const count = Object.keys(rooms[code].peers).length
+            if (count >= 8){
+                socket.emit('error', { reason: 'ROOM_MAX_SIZE', message: 'This room reached the maximum amount of users allowed'})
+                return
+            }
             addPeerToRoom(socket, code, name)
+            const newCount = Object.keys(rooms[code].peers).length
+            if (newCount === 7){
+                io.to(code).emit('soft-cap-reached')
+            }
+            if (newCount === 8){
+                io.to(code).emit('hard-cap-reached')
+            }
             if(rooms[code].deathTimer){
                 clearTimeout(rooms[code].deathTimer)
                 rooms[code].deathTimer = null

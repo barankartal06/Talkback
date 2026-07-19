@@ -224,6 +224,20 @@ socket.on('session-ended', ()=> {
     })
 })
 
+socket.on('soft-cap-reached', () => {
+    showModal({
+        text: 'This room now has more than 6 people. Audio quality may drop with larger groups.',
+        btn1Label: 'Dismiss'
+    })
+})
+
+socket.on('hard-cap-reached', () => {
+    showModal({
+        text: 'This room is now full at 8 people. No one else can join.',
+        btn1Label: 'Dismiss'
+    })
+})
+
 socket.on('peers-update', ({peers}) => {
     console.log('peers-update fired', peers)
         const ids = Object.keys(peers)
@@ -243,13 +257,11 @@ socket.on('peers-update', ({peers}) => {
     })
 
 socket.on('error', ({ reason, message }) => {
-    if (reason === 'ROOM_NOT_FOUND'){
-        if(stream){
-            stream.getTracks().forEach(t => t.stop())
-            stream = null}
-        entryError.textContent = message
-        entryError.classList.remove('hidden')}
-    
+    if(stream){
+        stream.getTracks().forEach(t => t.stop())
+        stream = null}
+    entryError.textContent = message
+    entryError.classList.remove('hidden')
 })
 
 async function handleOffer(offer, senderId) {
