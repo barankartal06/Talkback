@@ -30,6 +30,7 @@ const modalBackdrop = document.getElementById('modal-backdrop')
 const modalText = document.getElementById('modal-text')
 const modalBtn1 = document.getElementById('modal-btn-1')
 const modalBtn2 = document.getElementById('modal-btn-2')
+const capacityBanner = document.getElementById('capacity-banner')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -224,7 +225,9 @@ socket.on('session-ended', ()=> {
 })
 
 socket.on('peers-update', ({peers}) => {
+    console.log('peers-update fired', peers)
         const ids = Object.keys(peers)
+        capacityBanner.classList.toggle('hidden', ids.length < 6)
         if (ids.length === 0) {
             div.innerHTML = '<p class="peers-empty">No peers connected yet</p>'
             return
