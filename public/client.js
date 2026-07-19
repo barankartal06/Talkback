@@ -111,10 +111,12 @@ function renderPeers(){
     }
     div.innerHTML = ''
     for (const id in currentPeers) {
+        const isLost = failedPeers.has(id)
         div.innerHTML += `
-            <div class="peer-item">
+            <div class="peer-item ${isLost ? 'peer-lost' : ''}">
                 <span class="peer-dot"></span>
-                <span>${currentPeers[id].name}</span>
+                <span class="peer-name">${currentPeers[id].name}</span>
+                ${isLost ? `<button class="peer-kick" data-id="${id}">Kick</button>` : ''}
             </div>`
     }
 }
@@ -130,6 +132,7 @@ function onOutsideClick(e) {
         collapseExitMenu();
     }
 }
+
 exitToggle.addEventListener('click', (e) => {
     e.stopPropagation();               // don't let this click reach document
     exitToggle.classList.add('hidden');
@@ -194,6 +197,18 @@ endBtn.addEventListener('click', ()=>{
     })
 })
 
+div.addEventListener('click', (e) => {
+    const kickBtn = e.target.closest('.peer-kick')
+    if (!kickBtn) return          
+    const id = kickBtn.dataset.id 
+    showModal({
+        text: 'Are you sure you want to kick this user? This will remove them from the session.',
+        btn2Label: 'Kick',
+        btn2Action: () => socket.emit('kick', { targetId: id}),
+        btn1Label: 'Cancel'
+    })
+})
+
 shareClose.addEventListener('click', () =>{
     sharePanel.classList.remove('open')
     shareBackdrop.classList.add('hidden')
@@ -220,6 +235,12 @@ socket.on('existing-peers', async ({peers, code}) => {
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
         })
         connections[id] = pc
+        pc.onconnectionstatechange = () => {
+            if (pc.connectionState === 'failed') {
+                failedPeers.add(id)
+                renderPeers()
+            }
+        }
         pc.ontrack = (e) => {
             const audio = new Audio()
             audio.srcObject = e.streams[0]
@@ -270,11 +291,22 @@ socket.on('error', ({ reason, message }) => {
     entryError.classList.remove('hidden')
 })
 
+socket.on('kicked', () => {
+    resetToEntry()
+    showModal({ text: "You've been removed from the session.", btn1Label: 'Dismiss' })
+})
+
 async function handleOffer(offer, senderId) {
     const pc = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     })
     connections[senderId] = pc
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'failed') {
+            ailedPeers.add(senderId)
+            renderPeers()
+        }
+    }
     pc.ontrack = (e) => {
         const audio = new Audio()
         audio.srcObject = e.streams[0]
