@@ -303,7 +303,7 @@ async function handleOffer(offer, senderId) {
     connections[senderId] = pc
     pc.onconnectionstatechange = () => {
         if (pc.connectionState === 'failed') {
-            ailedPeers.add(senderId)
+            failedPeers.add(senderId)
             renderPeers()
         }
     }
