@@ -1,4 +1,5 @@
 require('dotenv').config()
+const verifyToken = require('./auth')
 const port= 8080
 const rooms = {}
 
