@@ -59,6 +59,27 @@ server.listen(port, async () => {
     ngrokUrl=listener.url()
 })
 
+io.use(async (socket,next)=> {
+    const token = socket.handshake.auth.token
+    if (!token){
+        socket.isGuest = true
+        next()
+    } else {
+        const verification = await verifyToken(token)
+        const status = verification.status
+        if (status==='valid'){
+            socket.userId = verification.userId
+            socket.isGuest = false
+            next()
+        }else if(status==='expired'){
+            next(new Error('EXPIRED'))
+        }else{
+            socket.isGuest = true
+            next()
+        }
+    }
+})
+
 io.on('connection', (socket)=> {
 
     socket.on('create', ( {name} )=>{
