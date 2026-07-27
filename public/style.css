@@ -797,3 +797,21 @@ body {
 .account-info-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #888; }
 .account-info-name { font-size: 1.125rem; font-weight: 700; color: #111; }
 .account-info-email { font-size: 0.875rem; color: #888; }
+
+.account-back {
+    align-self: center;
+    margin-top: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #888;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.account-back:hover { color: #111; }

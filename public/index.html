@@ -86,33 +86,53 @@
         </div>
     </div>
 
-    <!-- ACCOUNT PANEL -->
+<!-- ACCOUNT PANEL -->
     <div class="entry-panel hidden" id="panel-account">
-        <!-- signed-OUT -->
-        <div class="entry-card" id="account-signedout">
+
+        <!-- CHOOSER -->
+        <div class="entry-card" id="account-chooser">
+            <div class="account-info">
+                <p class="account-info-label">Account</p>
+                <p class="account-info-name">Save your songs</p>
+                <p class="account-info-email">Sign in to keep a library of what your band plays.</p>
+            </div>
+            <div class="account-actions">
+                <button id="choose-signin-btn" class="action-btn action-join">Sign in</button>
+                <button id="choose-signup-btn" class="action-btn action-create">Create account</button>
+            </div>
+        </div>
+
+        <!-- SIGN UP -->
+        <div class="entry-card hidden" id="account-signup">
             <label class="field-label" for="signup-name-input">Name</label>
             <input id="signup-name-input" class="name-input" type="text" placeholder="e.g. Baran" autocomplete="name" maxlength="24">
-            <label class="field-label" for="email-input">Email</label>
-            <input id="email-input" class="name-input" type="email" placeholder="you@example.com" autocomplete="email">
-            <label class="field-label account-field-label" for="password-input">Password</label>
-            <input id="password-input" class="name-input" type="password" placeholder="••••••••" autocomplete="current-password">
-            <p class="field-hint" id="account-hint">Sign in, or create an account</p>
+            <label class="field-label account-field-label" for="signup-email-input">Email</label>
+            <input id="signup-email-input" class="name-input" type="email" placeholder="you@example.com" autocomplete="email">
+            <label class="field-label account-field-label" for="signup-password-input">Password</label>
+            <input id="signup-password-input" class="name-input" type="password" placeholder="••••••••" autocomplete="new-password">
+            <p class="field-hint" id="signup-hint">At least 6 characters</p>
             <div class="account-actions">
-                <button id="signin-btn" class="action-btn action-join">Sign in</button>
-                <button id="signup-btn" class="action-btn action-create">Create account</button>
+                <button id="signup-btn" class="action-btn action-create" >Create account</button>
             </div>
-            <p class="entry-error hidden" id="account-error"></p>
+            <p class="entry-error hidden" id="signup-error"></p>
+            <button class="account-back" id="signup-back-btn" type="button">← Back</button>
         </div>
-        <!-- signed-IN -->
-        <div class="entry-card hidden" id="account-signedin">
-            <div class="account-info">
-                <p class="account-info-label">Signed in as</p>
-                <p class="account-info-name" id="account-name">—</p>
-                <p class="account-info-email" id="account-email">—</p>
+
+        <!-- SIGN IN -->
+        <div class="entry-card hidden" id="account-signin">
+            <label class="field-label" for="signin-email-input">Email</label>
+            <input id="signin-email-input" class="name-input" type="email" placeholder="you@example.com" autocomplete="email">
+            <label class="field-label account-field-label" for="signin-password-input">Password</label>
+            <input id="signin-password-input" class="name-input" type="password" placeholder="••••••••" autocomplete="current-password">
+            <p class="field-hint" id="signin-hint">Welcome back</p>
+            <div class="account-actions">
+                <button id="signin-btn" class="action-btn action-join" >Sign in</button>
             </div>
-            <button id="signout-btn" class="action-btn action-create">Sign out</button>
+            <p class="entry-error hidden" id="signin-error"></p>
+            <button class="account-back" id="signin-back-btn" type="button">← Back</button>
         </div>
-        <!-- confirmation pending -->
+
+        <!-- CONFIRMATION PENDING -->
         <div class="entry-card hidden" id="account-pending">
             <div class="account-info">
                 <p class="account-info-label">Almost there</p>
@@ -121,6 +141,17 @@
             </div>
             <button id="pending-back-btn" class="action-btn action-join">Back to sign in</button>
         </div>
+
+        <!-- SIGNED IN -->
+        <div class="entry-card hidden" id="account-signedin">
+            <div class="account-info">
+                <p class="account-info-label">Signed in as</p>
+                <p class="account-info-name" id="account-name">—</p>
+                <p class="account-info-email" id="account-email">—</p>
+            </div>
+            <button id="signout-btn" class="action-btn action-create">Sign out</button>
+        </div>
+
     </div>
 
     <!-- BOTTOM NAV -->

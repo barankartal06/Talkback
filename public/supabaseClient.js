@@ -4,36 +4,49 @@ const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const { createClient } = supabase
 const sb = createClient(projectUrl, anonKey)
 
-const emailInput = document.getElementById('email-input')
-const passwordInput = document.getElementById('password-input')
-const signNameInput = document.getElementById('signup-name-input')
-const accountError = document.getElementById('account-error')
-const signedOut = document.getElementById('account-signedout')
+const signupEmailInput = document.getElementById('signup-email-input')
+const signupPasswordInput = document.getElementById('signup-password-input')
+const signupNameInput = document.getElementById('signup-name-input')
+const signupError = document.getElementById('signup-error')
 const emailEntered = document.getElementById('pending-email')
-const verifyState = document.getElementById('account-pending')
 const signupBtn = document.getElementById('signup-btn')
+const chooseSignupBtn = document.getElementById('choose-signup-btn')
+const chooseSigninBtn = document.getElementById('choose-signin-btn')
+const signupBackBtn = document.getElementById('signup-back-btn')
+const signinBackBtn = document.getElementById('signin-back-btn')
 const pendingBackBtn = document.getElementById('pending-back-btn')
+const accountStates = document.querySelectorAll('#panel-account .entry-card')
 
 async function signUp() {
-    const email = emailInput.value.trim()
-    const password = passwordInput.value.trim()
-    const name = signNameInput.value.trim()
+    const email = signupEmailInput.value.trim()
+    const password = signupPasswordInput.value.trim()
+    const name = signupNameInput.value.trim()
 
     const { data, error } = await sb.auth.signUp({email, password, options: {data: {name} } })
     if (error){
-        accountError.textContent = error.message
-        accountError.classList.remove('hidden')
+        signupError.textContent = error.message
+        signupError.classList.remove('hidden')
     } else {
-        signedOut.classList.add('hidden')
+        showAccountState('account-pending')
         emailEntered.textContent=email
-        verifyState.classList.remove('hidden')
-        passwordInput.value = ''
+        signupPasswordInput.value = ''
     }
+}
+
+function showAccountState(id){
+    accountStates.forEach((state) => {
+        if (state.id===id){
+            state.classList.remove('hidden')
+        } else {
+            state.classList.add('hidden')
+        }
+    })
 }
 
 signupBtn.addEventListener('click', signUp)
 
-pendingBackBtn.addEventListener('click', () => {
-    verifyState.classList.add('hidden')
-    signedOut.classList.remove('hidden')
-})
+pendingBackBtn.addEventListener('click', () => showAccountState('account-signin'))
+chooseSignupBtn.addEventListener('click', () => showAccountState('account-signup'))
+chooseSigninBtn.addEventListener('click', () => showAccountState('account-signin'))
+signupBackBtn.addEventListener('click', () => showAccountState('account-chooser'))
+signinBackBtn.addEventListener('click', () => showAccountState('account-chooser'))
