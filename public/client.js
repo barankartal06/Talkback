@@ -33,6 +33,9 @@ const modalText = document.getElementById('modal-text')
 const modalBtn1 = document.getElementById('modal-btn-1')
 const modalBtn2 = document.getElementById('modal-btn-2')
 const capacityBanner = document.getElementById('capacity-banner')
+const entryNav = document.getElementById('entry-nav')
+const panels = document.querySelectorAll('.entry-panel')
+const navItems = document.querySelectorAll('.entry-nav-item')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -72,6 +75,25 @@ function hideModal() {
 
 modalBackdrop.addEventListener('click', (e) => {
     if (e.target === modalBackdrop) hideModal()
+})
+
+entryNav.addEventListener('click', (e) => {
+    const item = e.target.closest('.entry-nav-item')
+    if (!item) return
+    panels.forEach((panel) => {
+        if (panel.id === item.dataset.panel){
+            panel.classList.remove('hidden')
+        } else {
+            panel.classList.add('hidden')
+        }
+    })
+    navItems.forEach((nav) => {
+        if (nav===item){
+            nav.classList.add('is-active')
+        } else {
+            nav.classList.remove('is-active')
+        }
+    })
 })
 
 function resetToEntry(){

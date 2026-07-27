@@ -16,6 +16,7 @@
 
     <div class="entry-brand">Talkback</div>
 
+    <div class="entry-panel" id="panel-enter">
     <div class="entry-card">
         <label class="field-label" for="name-input">Your name</label>
         <input
@@ -68,6 +69,56 @@
 
         <p class="entry-error hidden" id="entry-error"></p>
     </div>
+    </div>
+
+    <!-- LIBRARY PANEL -->
+    <div class="entry-panel hidden" id="panel-library">
+        <div class="entry-card">
+            <div class="library-empty">
+                <p class="library-empty-title">Your library</p>
+                <p class="library-empty-body">
+                    Save the songs you play — key, tempo, and all — so they're
+                    ready the next time your band gets together.
+                </p>
+                <p class="library-empty-cta">Sign in from the Account tab to start your library.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCOUNT PANEL -->
+    <div class="entry-panel hidden" id="panel-account">
+        <!-- signed-OUT -->
+        <div class="entry-card" id="account-signedout">
+            <label class="field-label" for="signup-name-input">Name</label>
+            <input id="signup-name-input" class="name-input" type="text" placeholder="e.g. Baran" autocomplete="name" maxlength="24">
+            <label class="field-label" for="email-input">Email</label>
+            <input id="email-input" class="name-input" type="email" placeholder="you@example.com" autocomplete="email">
+            <label class="field-label account-field-label" for="password-input">Password</label>
+            <input id="password-input" class="name-input" type="password" placeholder="••••••••" autocomplete="current-password">
+            <p class="field-hint" id="account-hint">Sign in, or create an account</p>
+            <div class="account-actions">
+                <button id="signin-btn" class="action-btn action-join">Sign in</button>
+                <button id="signup-btn" class="action-btn action-create">Create account</button>
+            </div>
+            <p class="entry-error hidden" id="account-error"></p>
+        </div>
+        <!-- signed-IN -->
+        <div class="entry-card hidden" id="account-signedin">
+            <div class="account-info">
+                <p class="account-info-label">Signed in as</p>
+                <p class="account-info-name" id="account-name">—</p>
+                <p class="account-info-email" id="account-email">—</p>
+            </div>
+            <button id="signout-btn" class="action-btn action-create">Sign out</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="entry-nav" id="entry-nav">
+        <button class="entry-nav-item is-active" data-panel="panel-enter" type="button">Enter</button>
+        <button class="entry-nav-item" data-panel="panel-library" type="button">Library</button>
+        <button class="entry-nav-item" data-panel="panel-account" type="button">Account</button>
+    </nav>
 
 </div>
 

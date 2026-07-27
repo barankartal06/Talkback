@@ -751,3 +751,49 @@ body {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }
+
+/* ── ENTRY PANELS + NAV ── */
+.entry-panel { width: 100%; display: flex; justify-content: center; }
+.entry { padding-bottom: 5.5rem; }
+
+.entry-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; background: #F5F5F5;
+    border-top: 1px solid #E8E8E8; z-index: 30;
+}
+.entry-nav-item {
+    flex: 1; position: relative;
+    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: #888;
+    background: transparent; border: none; padding: 1rem 0.5rem; cursor: pointer;
+    transition: color 0.15s; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.entry-nav-item + .entry-nav-item { border-left: 1px solid #E8E8E8; }
+.entry-nav-item:hover { color: #111; }
+.entry-nav-item.is-active { color: #111; }
+.entry-nav-item.is-active::before {
+    content: ''; position: absolute; top: -1px; left: 0; right: 0;
+    height: 2px; background: #E03000;
+}
+
+/* ── LIBRARY empty state ── */
+.library-empty {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    gap: 0.75rem; background: #fff; border: 1px solid #E8E8E8;
+    border-radius: 12px; padding: 2.5rem 1.5rem;
+}
+.library-empty-title { font-size: 0.9375rem; font-weight: 700; color: #111; }
+.library-empty-body { font-size: 0.875rem; line-height: 1.5; color: #888; }
+.library-empty-cta { font-size: 0.8125rem; font-weight: 600; color: #E03000; margin-top: 0.25rem; }
+
+/* ── ACCOUNT ── */
+.account-field-label { margin-top: 1rem; }
+.account-actions { display: flex; flex-direction: column; gap: 0.625rem; margin-top: 1.25rem; }
+.account-info {
+    display: flex; flex-direction: column; gap: 0.25rem;
+    background: #fff; border: 1px solid #E8E8E8; border-radius: 12px;
+    padding: 1.5rem 1.25rem; margin-bottom: 1.25rem;
+}
+.account-info-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #888; }
+.account-info-name { font-size: 1.125rem; font-weight: 700; color: #111; }
+.account-info-email { font-size: 0.875rem; color: #888; }
