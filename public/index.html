@@ -6,6 +6,7 @@
     <title>Talkback</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -111,6 +112,15 @@
             </div>
             <button id="signout-btn" class="action-btn action-create">Sign out</button>
         </div>
+        <!-- confirmation pending -->
+        <div class="entry-card hidden" id="account-pending">
+            <div class="account-info">
+                <p class="account-info-label">Almost there</p>
+                <p class="account-info-name">Check your email</p>
+                <p class="account-info-email">We sent a confirmation link to <span id="pending-email">—</span>. Click it to activate your account, then sign in.</p>
+            </div>
+            <button id="pending-back-btn" class="action-btn action-join">Back to sign in</button>
+        </div>
     </div>
 
     <!-- BOTTOM NAV -->
@@ -181,6 +191,7 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="/supabaseClient.js" defer></script>
 <script src="/client.js" defer></script>
 </body>
 </html>
