@@ -16,6 +16,10 @@ const signupBackBtn = document.getElementById('signup-back-btn')
 const signinBackBtn = document.getElementById('signin-back-btn')
 const pendingBackBtn = document.getElementById('pending-back-btn')
 const accountStates = document.querySelectorAll('#panel-account .entry-card')
+const signinEmailInput = document.getElementById('signin-email-input')
+const signinPasswordInput = document.getElementById('signin-password-input')
+const signinBtn = document.getElementById('signin-btn')
+const signinError = document.getElementById('signin-error')
 
 async function signUp() {
     const email = signupEmailInput.value.trim()
@@ -42,6 +46,25 @@ function showAccountState(id){
         }
     })
 }
+
+function isNonEmpty(input){
+    return input.value.trim().length > 0 
+}
+
+function signupFieldValidity(){
+    const isValid = (isNonEmpty(signupNameInput) && isNonEmpty(signupEmailInput) && isNonEmpty(signupPasswordInput))
+    signupBtn.disabled = !isValid
+}
+signupEmailInput.addEventListener('input', signupFieldValidity)
+signupPasswordInput.addEventListener('input', signupFieldValidity)
+signupNameInput.addEventListener('input', signupFieldValidity)
+
+function signinFieldValidity(){
+    const isValid = (isNonEmpty(signinEmailInput)&&isNonEmpty(signinPasswordInput))
+    signinBtn.disabled = !isValid
+}
+signinEmailInput.addEventListener('input',signinFieldValidity)
+signinPasswordInput.addEventListener('input',signinFieldValidity)
 
 signupBtn.addEventListener('click', signUp)
 
