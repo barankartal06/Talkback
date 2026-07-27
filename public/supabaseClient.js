@@ -20,6 +20,8 @@ const signinEmailInput = document.getElementById('signin-email-input')
 const signinPasswordInput = document.getElementById('signin-password-input')
 const signinBtn = document.getElementById('signin-btn')
 const signinError = document.getElementById('signin-error')
+const accountName = document.getElementById('account-name')
+const accountEmail = document.getElementById('account-email')
 
 async function signUp() {
     const email = signupEmailInput.value.trim()
@@ -34,6 +36,21 @@ async function signUp() {
         showAccountState('account-pending')
         emailEntered.textContent=email
         signupPasswordInput.value = ''
+    }
+}
+
+async function signIn() {
+    const email = signinEmailInput.value.trim()
+    const password = signinPasswordInput.value.trim()
+    const {data, error} = await sb.auth.signInWithPassword({ email, password})
+    if (error){
+        signinError.textContent = error.message
+        signinError.classList.remove('hidden')
+    } else {
+        
+        showAccountState('account-signedin')
+        accountName.textContent = data.user.user_metadata.name
+        accountEmail.textContent = data.user.email
     }
 }
 
@@ -67,6 +84,7 @@ signinEmailInput.addEventListener('input',signinFieldValidity)
 signinPasswordInput.addEventListener('input',signinFieldValidity)
 
 signupBtn.addEventListener('click', signUp)
+signinBtn.addEventListener('click', signIn)
 
 pendingBackBtn.addEventListener('click', () => showAccountState('account-signin'))
 chooseSignupBtn.addEventListener('click', () => showAccountState('account-signup'))
