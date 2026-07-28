@@ -4,6 +4,8 @@ const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const { createClient } = supabase
 const sb = createClient(projectUrl, anonKey)
 
+let accessToken;
+
 const signupEmailInput = document.getElementById('signup-email-input')
 const signupPasswordInput = document.getElementById('signup-password-input')
 const signupNameInput = document.getElementById('signup-name-input')
@@ -47,12 +49,22 @@ async function signIn() {
         signinError.textContent = error.message
         signinError.classList.remove('hidden')
     } else {
-        
-        showAccountState('account-signedin')
-        accountName.textContent = data.user.user_metadata.name
-        accountEmail.textContent = data.user.email
+        signinPasswordInput.value = ''
     }
 }
+
+sb.auth.onAuthStateChange((event, session) => {
+    if (session){
+        accessToken = session.access_token
+        showAccountState('account-signedin')
+        accountEmail.textContent = session.user.email
+        accountName.textContent = session.user.user_metadata.name 
+    } else {
+        accessToken = null
+        showAccountState('account-chooser')
+    }
+
+})
 
 function showAccountState(id){
     accountStates.forEach((state) => {

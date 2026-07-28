@@ -169,7 +169,6 @@ function refreshEntryState(){
 }
 nameInput.addEventListener('input', refreshEntryState)
 
-
 createBtn.addEventListener('click', async () => {
     myName = nameInput.value.trim()
     if (!myName) return
