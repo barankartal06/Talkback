@@ -24,6 +24,7 @@ const signinBtn = document.getElementById('signin-btn')
 const signinError = document.getElementById('signin-error')
 const accountName = document.getElementById('account-name')
 const accountEmail = document.getElementById('account-email')
+const signoutBtn = document.getElementById('signout-btn')
 
 async function signUp() {
     const email = signupEmailInput.value.trim()
@@ -97,6 +98,7 @@ signinPasswordInput.addEventListener('input',signinFieldValidity)
 
 signupBtn.addEventListener('click', signUp)
 signinBtn.addEventListener('click', signIn)
+signoutBtn.addEventListener('click', ()=> sb.auth.signOut())
 
 pendingBackBtn.addEventListener('click', () => showAccountState('account-signin'))
 chooseSignupBtn.addEventListener('click', () => showAccountState('account-signup'))
