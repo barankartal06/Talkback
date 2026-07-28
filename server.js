@@ -15,7 +15,7 @@ function addPeerToRoom(socket, code, name) {
     socket.emit('existing-peers', { peers : rooms[code].peers, code })
     rooms[code].peers[socket.id] = { name, userId: socket.userId }
     socket.join(code)
-    console.log(name, 'entered room no:', code)
+    console.log(name,'with userId:', socket.userId, 'entered room no:', code)
     socket.code = code
     io.to(code).emit('peers-update',{ peers: rooms[code].peers })
 }

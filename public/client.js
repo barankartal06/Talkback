@@ -2,7 +2,7 @@ let myName;
 let roomCode;
 let stream;
 let currentPeers = {}
-const socket = io()
+const socket = io( { autoConnect: false} )
 const connections = {}
 const failedPeers = new Set()
 
@@ -120,8 +120,8 @@ function resetToEntry(){
 }
 
 function leaveRoom(){
-    resetToEntry()
     socket.emit('leave')
+    resetToEntry()
 }
 
 function renderPeers(){
@@ -172,6 +172,9 @@ nameInput.addEventListener('input', refreshEntryState)
 createBtn.addEventListener('click', async () => {
     myName = nameInput.value.trim()
     if (!myName) return
+    if(socket.connected) socket.disconnect()
+    socket.auth = { token: accessToken }
+    socket.connect()
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     socket.emit('create', { name: myName })
 })
@@ -187,6 +190,9 @@ joinBtn.addEventListener('click', async () => {
     myName = nameInput.value.trim()
     const code = codeInput.value.trim()
     if (!myName || code.length !== 6) return
+    if (socket.connected) socket.disconnect()
+    socket.auth = { token: accessToken }
+    socket.connect()
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     socket.emit('join', {code, name: myName})
 })
