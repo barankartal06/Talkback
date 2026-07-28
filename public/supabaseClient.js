@@ -57,15 +57,11 @@ async function signIn() {
 sb.auth.onAuthStateChange((event, session) => {
     if (session){
         accessToken = session.access_token
-        if(!nameInput.value) nameInput.value = session.user.user_metadata.name
-        refreshEntryState()
         showAccountState('account-signedin')
         accountEmail.textContent = session.user.email
         accountName.textContent = session.user.user_metadata.name 
     } else {
         accessToken = null
-        nameInput.value = ''
-        refreshEntryState()
         showAccountState('account-chooser')
     }
 

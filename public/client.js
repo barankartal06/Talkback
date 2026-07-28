@@ -308,7 +308,7 @@ socket.on('hard-cap-reached', () => {
 socket.on('peers-update', ({peers}) => {
        currentPeers= peers
        renderPeers()
-    })
+})
 
 socket.on('error', ({ reason, message }) => {
     if(stream){
@@ -328,6 +328,16 @@ socket.on('connect_error', (err)=> {
         showModal({text: "Couldn't reach the server. Check your connection and try again.", btn1Label: 'Dismiss'})
     }
 })
+
+sb.auth.onAuthStateChange((event, session) => {
+    if (session){
+        if(!nameInput.value) nameInput.value = session.user.user_metadata.name
+        refreshEntryState()
+    } else {
+        nameInput.value = ''
+        refreshEntryState()
+    }
+})  
 
 socket.on('kicked', () => {
     resetToEntry()
