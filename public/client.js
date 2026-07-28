@@ -318,6 +318,17 @@ socket.on('error', ({ reason, message }) => {
     entryError.classList.remove('hidden')
 })
 
+socket.on('connect_error', (err)=> {
+    if (stream){ 
+        stream.getTracks().forEach(t => t.stop())
+        stream = null}
+    if (err.message === 'EXPIRED'){
+        showModal({text: 'Your session needs refreshing. Please try again.', btn1Label: 'Dismiss'})
+    } else {
+        showModal({text: "Couldn't reach the server. Check your connection and try again.", btn1Label: 'Dismiss'})
+    }
+})
+
 socket.on('kicked', () => {
     resetToEntry()
     showModal({ text: "You've been removed from the session.", btn1Label: 'Dismiss' })
