@@ -1,0 +1,1 @@
+revoke all on song from anon;
