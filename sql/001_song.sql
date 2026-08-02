@@ -28,4 +28,4 @@ create policy "own songs deletable" on song
   for delete to authenticated 
   using (auth.uid() = user_id);
 
-grant select, insert, update, delete on song to authenticated
+grant select, insert, update, delete on song to authenticated;
