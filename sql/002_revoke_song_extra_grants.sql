@@ -1,0 +1,1 @@
+revoke truncate, references, trigger on song from authenticated;
