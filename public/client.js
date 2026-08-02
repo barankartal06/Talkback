@@ -2,6 +2,7 @@ let myName;
 let roomCode;
 let stream;
 let currentPeers = {}
+let librarySongs = []
 const socket = io( { autoConnect: false} )
 const connections = {}
 const failedPeers = new Set()
@@ -36,6 +37,12 @@ const capacityBanner = document.getElementById('capacity-banner')
 const entryNav = document.getElementById('entry-nav')
 const panels = document.querySelectorAll('.entry-panel')
 const navItems = document.querySelectorAll('.entry-nav-item')
+const librarySignedout = document.getElementById('library-signedout')
+const libraryBlank = document.getElementById('library-blank')
+const libraryList = document.getElementById('library-list')
+const libraryLoading = document.getElementById('library-loading')
+const libraryError = document.getElementById('library-error')
+const libStates = [librarySignedout, libraryBlank, libraryList, libraryLoading, libraryError]
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -140,6 +147,36 @@ function renderPeers(){
                 <span class="peer-name">${currentPeers[id].name}</span>
                 ${isLost ? `<button class="peer-kick" data-id="${id}">Kick</button>` : ''}
             </div>`
+    }
+}
+
+function showLibraryState(el){
+    libStates.forEach((state) => {
+        if (state === el){
+            state.classList.remove('hidden')
+        } else {
+            state.classList.add('hidden')
+        }
+    })
+}
+
+async function renderLibrary(){
+    if(accessToken){
+        const t = setTimeout(() => showLibraryState(libraryLoading), 200)
+        const { data, error } = await sb
+            .from('song')
+            .select('song_id, title, artist, song_key, mode, tempo')
+            .order('created_at', { ascending: false })
+        clearTimeout(t)
+        if (error) {
+            showLibraryState(libraryError)
+        } else if (data.length === 0){
+            showLibraryState(libraryBlank)
+        } else {
+            showLibraryState(libraryList)
+        }
+    } else {
+        showLibraryState(librarySignedout)
     }
 }
 
