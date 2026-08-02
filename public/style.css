@@ -815,3 +815,21 @@ body {
     touch-action: manipulation;
 }
 .account-back:hover { color: #111; }
+
+.library-list { display: flex; flex-direction: column; gap: 0.625rem; }
+
+.song-row {
+    display: flex; flex-direction: column; gap: 0.375rem;
+    background: #fff; border: 1px solid #E8E8E8;
+    border-radius: 10px; padding: 0.875rem 1rem;
+}
+.song-title  { font-size: 0.9375rem; font-weight: 700; color: #111; }
+.song-artist { font-size: 0.8125rem; color: #888; }
+.song-meta   { display: flex; gap: 1.25rem; margin-top: 0.25rem; }
+.song-meta-item {
+    font-size: 0.75rem; font-weight: 500; color: #888;
+    letter-spacing: 0.04em;
+}
+.song-meta-item b {
+    font-weight: 700; color: #111; margin-left: 0.375rem;
+}

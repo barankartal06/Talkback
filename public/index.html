@@ -74,16 +74,43 @@
 
     <!-- LIBRARY PANEL -->
     <div class="entry-panel hidden" id="panel-library">
-        <div class="entry-card">
-            <div class="library-empty">
-                <p class="library-empty-title">Your library</p>
-                <p class="library-empty-body">
-                    Save the songs you play — key, tempo, and all — so they're
-                    ready the next time your band gets together.
-                </p>
-                <p class="library-empty-cta">Sign in from the Account tab to start your library.</p>
-            </div>
+        <div class="entry-card" id="library-panel">
+
+        <!-- SIGNED OUT -->
+        <div class="library-empty" id="library-signedout">
+            <p class="library-empty-title">Your library</p>
+            <p class="library-empty-body">
+                Save the songs you play — key, tempo, and all — so they're
+                ready the next time your band gets together.
+            </p>
+            <p class="library-empty-cta">Sign in from the Account tab to start your library.</p>
         </div>
+
+        <!-- SIGNED IN, EMPTY -->
+        <div class="library-empty hidden" id="library-blank">
+            <p class="library-empty-title">Nothing saved yet</p>
+            <p class="library-empty-body">
+                Songs you save during a session will show up here.
+            </p>
+        </div>
+
+        <!-- LOADING -->
+        <div class="library-empty hidden" id="library-loading">
+            <p class="library-empty-body">Loading your library…</p>
+        </div>
+
+        <!-- ERROR -->
+        <div class="library-empty hidden" id="library-error">
+            <p class="library-empty-title">Couldn't load your library</p>
+            <p class="library-empty-body">
+                Check your connection and switch back to this tab to try again.
+            </p>
+        </div>
+
+        <!-- LIST -->
+        <div class="library-list hidden" id="library-list"></div>
+
+    </div>
     </div>
 
 <!-- ACCOUNT PANEL -->
