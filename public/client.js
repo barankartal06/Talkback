@@ -3,6 +3,7 @@ let roomCode;
 let stream;
 let currentPeers = {}
 let librarySongs = []
+const KEYS = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B']
 const socket = io( { autoConnect: false} )
 const connections = {}
 const failedPeers = new Set()
@@ -76,6 +77,53 @@ function showModal({ text, btn1Label, btn1Action, btn2Label, btn2Action }) {
     modalBackdrop.classList.remove('hidden')
 }
 
+function metaItem(label , value){
+    const span = document.createElement('span')
+    span.className = 'song-meta-item'
+    span.textContent = label
+
+    const b = document.createElement('b')
+    b.textContent = value
+    span.append(b)
+    return span
+}
+
+function songRow(song) {
+    const row = document.createElement('div')
+    row.className = 'song-row'
+    row._song = song
+
+    let keyLabel
+    if (song.song_key === null) {
+        keyLabel = '--'
+    } else {
+        keyLabel = KEYS[song.song_key]
+    }
+
+    const modeLabel = song.mode ?? '--'
+    const tempoLabel = song.tempo ?? '--'
+
+    const titleDiv = document.createElement('div')
+    titleDiv.className = 'song-title'
+    titleDiv.textContent = song.title
+
+    const artistDiv = document.createElement('div')
+    artistDiv.className = 'song-artist'
+    if(!song.artist){
+        artistDiv.textContent = '--'
+    } else {
+    artistDiv.textContent = song.artist} 
+
+    const metaDiv = document.createElement('div')
+    metaDiv.className = 'song-meta'
+    metaDiv.append(metaItem('Key', keyLabel))
+    metaDiv.append(metaItem('Mode', modeLabel))
+    metaDiv.append(metaItem('Tempo', tempoLabel))
+
+    row.append(titleDiv, artistDiv , metaDiv)
+    return row
+}
+
 function hideModal() {
     modalBackdrop.classList.add('hidden')
 }
@@ -101,6 +149,8 @@ entryNav.addEventListener('click', (e) => {
             nav.classList.remove('is-active')
         }
     })
+
+    if (item.dataset.panel === 'panel-library') renderLibrary()
 })
 
 function resetToEntry(){
@@ -173,6 +223,11 @@ async function renderLibrary(){
         } else if (data.length === 0){
             showLibraryState(libraryBlank)
         } else {
+            librarySongs = data
+            libraryList.replaceChildren()
+            librarySongs.forEach((song) => {
+                libraryList.append(songRow(song))
+            })
             showLibraryState(libraryList)
         }
     } else {
