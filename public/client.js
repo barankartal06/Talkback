@@ -243,6 +243,20 @@ libAddFirstBtn.addEventListener('click', () => {
     showForm(null)
 })
 
+libRows.addEventListener('click', (e) => {
+    const deleteBtn = e.target.closest('.song-delete')
+    if (!deleteBtn) return
+    const song = deleteBtn.closest('.song-row')._song
+    showModal({text: `Are you sure you want to delete "${song.title}"?`, btn2Label: 'Delete', btn1Label: 'Cancel', btn2Action: async () => {
+        const { error } = await sb.from('song').delete().eq('song_id', song.song_id)
+        if(error){
+            showModal({ text: "Couldn't delete that song. " + error.message, btn1Label: 'Dismiss' })
+        } else {
+            renderLibrary()
+        }
+    } })
+})
+
 formCancelBtn.addEventListener('click',(hideForm))
 
 formBackdrop.addEventListener('click', (e) => {
