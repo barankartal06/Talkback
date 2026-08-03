@@ -44,6 +44,20 @@ const libraryList = document.getElementById('library-list')
 const libraryLoading = document.getElementById('library-loading')
 const libraryError = document.getElementById('library-error')
 const libStates = [librarySignedout, libraryBlank, libraryList, libraryLoading, libraryError]
+const libRows = document.getElementById('library-rows')
+const libAddFirstBtn = document.getElementById('library-add-first-btn')
+const libAddBtn = document.getElementById('library-add-btn')
+
+const formBackdrop = document.getElementById('form-backdrop')
+const formTitle = document.getElementById('form-title')
+const formTitleInput = document.getElementById('form-title-input')
+const formArtistInput = document.getElementById('form-artist-input')
+const formKeyInput = document.getElementById('form-key-input')
+const formModeInput = document.getElementById('form-mode-input')
+const formTempoInput = document.getElementById('form-tempo-input')
+const formError = document.getElementById('form-error')
+const formCancelBtn = document.getElementById('form-cancel-btn')
+const formSaveBtn = document.getElementById('form-save-btn')
 
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
@@ -220,13 +234,15 @@ async function renderLibrary(){
         clearTimeout(t)
         if (error) {
             showLibraryState(libraryError)
-        } else if (data.length === 0){
+            return
+        } 
+        librarySongs = data
+        if (data.length === 0){
             showLibraryState(libraryBlank)
         } else {
-            librarySongs = data
-            libraryList.replaceChildren()
+            libRows.replaceChildren()
             librarySongs.forEach((song) => {
-                libraryList.append(songRow(song))
+                libRows.append(songRow(song))
             })
             showLibraryState(libraryList)
         }
