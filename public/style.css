@@ -879,3 +879,22 @@ body {
 }
 .library-add-btn:active { transform: scale(0.94); }
 #library-blank .action-btn { margin-top: 1.25rem; }
+
+.song-row { position: relative; }
+
+.song-delete {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    background: transparent; border: none; border-radius: 6px;
+    color: #E03000; cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.song-delete:hover { opacity: 1; background: #FFF3F0; }
+.song-delete:active { transform: scale(0.94); }
+
+.song-row .song-title { padding-right: 2rem; }

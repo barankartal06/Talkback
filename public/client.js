@@ -172,7 +172,13 @@ function songRow(song) {
     metaDiv.append(metaItem('Mode', modeLabel))
     metaDiv.append(metaItem('Tempo', tempoLabel))
 
-    row.append(titleDiv, artistDiv , metaDiv)
+    const deleteBtn =  document.createElement('button')
+    deleteBtn.className = 'song-delete'
+    deleteBtn.type = 'button'
+    deleteBtn.setAttribute('aria-label', 'Delete song')
+    deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>`
+
+    row.append(titleDiv, artistDiv , metaDiv, deleteBtn)
     return row
 }
 
