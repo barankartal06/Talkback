@@ -427,6 +427,7 @@ sb.auth.onAuthStateChange((event, session) => {
         refreshEntryState()
     } else {
         nameInput.value = ''
+        librarySongs = []
         refreshEntryState()
     }
 })  
