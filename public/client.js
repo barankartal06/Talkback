@@ -3,6 +3,7 @@ let roomCode;
 let stream;
 let currentPeers = {}
 let librarySongs = []
+let userId
 const KEYS = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B']
 const socket = io( { autoConnect: false} )
 const connections = {}
@@ -175,9 +176,58 @@ function songRow(song) {
     return row
 }
 
+function constructSong(){
+    const rowTitle = formTitleInput.value.trim()
+    let rowArtist
+    const artist = formArtistInput.value.trim() 
+    if(artist === ''){
+        rowArtist = null
+    } else {
+        rowArtist = artist
+    }
+    let rowKey
+    if(formKeyInput.value === ''){
+        rowKey = null
+    } else {
+        rowKey = Number(formKeyInput.value)
+    }
+    let rowMode
+    if(formModeInput.value === ''){
+        rowMode = null
+    } else {
+        rowMode = formModeInput.value
+    }
+    let rowTempo
+    if(formTempoInput.value === ''){
+        rowTempo = null
+    } else {
+        rowTempo = Number(formTempoInput.value)
+    }
+
+    const row = {title: rowTitle, artist: rowArtist, song_key: rowKey, mode: rowMode, tempo: rowTempo}
+    return row
+}
+
 function hideModal() {
     modalBackdrop.classList.add('hidden')
 }
+
+formSaveBtn.addEventListener('click', async () => {
+    formSaveBtn.disabled = true
+
+    const row = {...constructSong(), user_id: userId}
+
+    const {error} = await sb.from('song').insert(row)
+
+    if(error){
+        formError.textContent = error.message
+        formError.classList.remove('hidden')
+        formSaveBtn.disabled = false
+    } else {
+        hideForm()
+        await renderLibrary()
+    }
+})
 
 libAddBtn.addEventListener('click', () => {
     showForm(null)
@@ -494,9 +544,11 @@ socket.on('connect_error', (err)=> {
 
 sb.auth.onAuthStateChange((event, session) => {
     if (session){
+        userId = session.user.id
         if(!nameInput.value) nameInput.value = session.user.user_metadata.name
         refreshEntryState()
     } else {
+        userId = null
         nameInput.value = ''
         librarySongs = []
         refreshEntryState()
