@@ -551,6 +551,7 @@ sb.auth.onAuthStateChange((event, session) => {
         userId = null
         nameInput.value = ''
         librarySongs = []
+        libRows.replaceChildren()
         refreshEntryState()
     }
 })  
