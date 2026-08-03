@@ -59,6 +59,13 @@ const formError = document.getElementById('form-error')
 const formCancelBtn = document.getElementById('form-cancel-btn')
 const formSaveBtn = document.getElementById('form-save-btn')
 
+KEYS.forEach((key, i) => {
+    const opt = document.createElement('option')
+    opt.textContent = key
+    opt.value = i
+    formKeyInput.append(opt)
+})
+
 const roomParam = new URLSearchParams(window.location.search).get('room')
 if (roomParam) {
     entrySplit.classList.add('join-only')
@@ -89,6 +96,36 @@ function showModal({ text, btn1Label, btn1Action, btn2Label, btn2Action }) {
     }
 
     modalBackdrop.classList.remove('hidden')
+}
+
+
+function showForm(song){
+    if(!song){
+        formTitle.textContent = 'Add Song'
+        formTitleInput.value = ''
+        formArtistInput.value = ''
+        formKeyInput.value = ''
+        formModeInput.value = ''
+        formTempoInput.value = ''
+    } else {
+        formTitle.textContent = 'Edit Song'
+        formTitleInput.value = song.title
+        formArtistInput.value = song.artist ?? ''
+        formKeyInput.value = song.song_key ?? ''
+        formModeInput.value = song.mode ?? ''
+        formTempoInput.value = song.tempo ?? ''
+    }
+    formError.classList.add('hidden')
+    formFieldValidity()
+    formBackdrop.classList.remove('hidden')
+}
+
+function formFieldValidity(){
+    formSaveBtn.disabled = formTitleInput.value.trim().length === 0 
+}
+
+function hideForm(){
+    formBackdrop.classList.add('hidden')
 }
 
 function metaItem(label , value){
@@ -141,6 +178,24 @@ function songRow(song) {
 function hideModal() {
     modalBackdrop.classList.add('hidden')
 }
+
+libAddBtn.addEventListener('click', () => {
+    showForm(null)
+})
+
+libAddFirstBtn.addEventListener('click', () => {
+    showForm(null)
+})
+
+formCancelBtn.addEventListener('click',(hideForm))
+
+formBackdrop.addEventListener('click', (e) => {
+    if(e.target === formBackdrop) hideForm()
+})
+
+formTitleInput.addEventListener('input', () => {
+    formFieldValidity()
+})
 
 modalBackdrop.addEventListener('click', (e) => {
     if (e.target === modalBackdrop) hideModal()

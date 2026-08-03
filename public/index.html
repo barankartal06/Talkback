@@ -90,8 +90,9 @@
         <div class="library-empty hidden" id="library-blank">
             <p class="library-empty-title">Nothing saved yet</p>
             <p class="library-empty-body">
-                Songs you save during a session will show up here.
+                Add the songs your band plays, or save them as you go during a session.
             </p>
+            <button id="library-add-first-btn" class="action-btn action-create">Add your first song</button>
         </div>
 
         <!-- LOADING -->
@@ -108,7 +109,13 @@
         </div>
 
         <!-- LIST -->
-        <div class="library-list hidden" id="library-list"></div>
+        <div class="library-list hidden" id="library-list">
+            <div class="library-list-header">
+                <p class="library-list-title">Your library</p>
+                <button id="library-add-btn" class="library-add-btn" type="button" aria-label="Add song">+</button>
+            </div>
+            <div id="library-rows"></div>
+        </div>
 
     </div>
     </div>
@@ -244,6 +251,54 @@
         <div class="modal-actions">
             <button id="modal-btn-1" class="modal-btn modal-btn-neutral" type="button"></button>
             <button id="modal-btn-2" class="modal-btn modal-btn-danger hidden" type="button"></button>
+        </div>
+    </div>
+</div>
+
+<!-- SONG FORM MODAL -->
+<div id="form-backdrop" class="modal-backdrop hidden">
+    <div class="modal">
+        <p class="form-title" id="form-title">Add song</p>
+
+        <div class="form-fields">
+            <div class="form-field">
+                <label class="field-label" for="form-title-input">Title</label>
+                <input id="form-title-input" class="name-input" type="text" placeholder="e.g. Careless Whisper" autocomplete="off" maxlength="120">
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" for="form-artist-input">Artist</label>
+                <input id="form-artist-input" class="name-input" type="text" placeholder="Optional" autocomplete="off" maxlength="120">
+            </div>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <label class="field-label" for="form-key-input">Key</label>
+                    <select id="form-key-input" class="name-input form-select">
+                        <option value="">—</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="form-mode-input">Mode</label>
+                    <select id="form-mode-input" class="name-input form-select">
+                        <option value="">—</option>
+                        <option value="major">Major</option>
+                        <option value="minor">Minor</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" for="form-tempo-input">Tempo</label>
+                <input id="form-tempo-input" class="name-input" type="number" placeholder="BPM" inputmode="numeric" min="1" max="300">
+            </div>
+        </div>
+
+        <p class="entry-error hidden" id="form-error"></p>
+
+        <div class="modal-actions">
+            <button id="form-cancel-btn" class="modal-btn modal-btn-neutral" type="button">Cancel</button>
+            <button id="form-save-btn" class="modal-btn modal-btn-save" type="button" disabled>Save</button>
         </div>
     </div>
 </div>
